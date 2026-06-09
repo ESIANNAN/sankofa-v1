@@ -72,7 +72,7 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
-    paddingHorizontal: 24, // Extended horizontally by reducing side padding
+    paddingHorizontal: 24,
     paddingTop: Platform.OS === 'ios' ? 70 : 40,
     paddingBottom: 40,
     justifyContent: 'space-between',
@@ -109,7 +109,7 @@ const styles = StyleSheet.create({
   footer: {
     width: '100%',
     alignItems: 'center',
-    gap: 20,
+    gap: 10,
   },
   ctaButton: {
     width: '100%',
