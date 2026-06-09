@@ -1,0 +1,17 @@
+# node modules and expo files
+node_modules/
+.expo/
+dist/
+web-build/
+
+# logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# system files
+.DS_Store
+Thumbs.db
+
+# expo-cli generated
+expo-env.d.ts
