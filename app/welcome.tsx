@@ -48,6 +48,7 @@ export default function WelcomeScreen() {
             size="lg"
             onPress={handleGetStarted}
             style={styles.ctaButton}
+            textStyle={{ textAlign: 'center', flex: 1 }}
           >
             Begin your Journey
           </Button>
@@ -111,9 +112,8 @@ const styles = StyleSheet.create({
     gap: 20,
   },
   ctaButton: {
-    width: '140%',
+    width: '100%',
     height: 67,
-
   },
   loginLink: {
     fontSize: 16,
