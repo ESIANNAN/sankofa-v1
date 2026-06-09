@@ -50,14 +50,7 @@ export default function SplashScreen() {
           resizeMode="contain"
         />
       </Animated.View>
-      <Animated.View style={[styles.textContainer, textAnimatedStyle]}>
-        <Text variant="heading" style={[styles.title, { color: textColor }]}>
-          Sankofa
-        </Text>
-        <Text variant="caption" style={[styles.subtitle, { color: mutedTextColor }]}>
-          Reclaim your language, reconnect with your heritage.
-        </Text>
-      </Animated.View>
+
     </View>
   );
 }
