@@ -113,6 +113,7 @@ const styles = StyleSheet.create({
   ctaButton: {
     width: '140%',
     height: 67,
+
   },
   loginLink: {
     fontSize: 16,
