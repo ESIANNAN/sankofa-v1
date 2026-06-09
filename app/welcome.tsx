@@ -13,8 +13,8 @@ export default function WelcomeScreen() {
   const tintColor = useColor('primary');
 
   const handleGetStarted = () => {
-    // Navigate to the main application tabs
-    router.replace('/(tabs)/(home)');
+    // Navigate to the signup screen
+    router.push('/signup' as any);
   };
 
   const handleLogin = () => {
@@ -31,7 +31,7 @@ export default function WelcomeScreen() {
         {/* Centered Left-Aligned Content Section */}
         <View style={styles.middleSection}>
           <Text variant="heading" style={[styles.title, { color: textColor }]}>
-            Akwaaba
+            Akwaaba,
           </Text>
           <Text variant="subtitle" style={[styles.welcomeText, { color: textColor }]}>
             Welcome to Sankofa
@@ -90,20 +90,20 @@ const styles = StyleSheet.create({
     fontSize: 48,
     fontWeight: '800',
     letterSpacing: -0.5,
-    marginBottom: 8,
+    marginBottom: 4,
     textAlign: 'left',
   },
   welcomeText: {
     fontSize: 22,
     fontWeight: '600',
     textAlign: 'left',
-    marginBottom: 16,
+    marginBottom: 4,
     lineHeight: 28,
   },
   description: {
     fontSize: 16,
     textAlign: 'left',
-    maxWidth: 300,
+    maxWidth: 350,
     lineHeight: 24,
   },
   footer: {
@@ -119,6 +119,6 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '600',
     textDecorationLine: 'underline',
-    paddingVertical: 8,
+    paddingVertical: 15,
   },
 });
