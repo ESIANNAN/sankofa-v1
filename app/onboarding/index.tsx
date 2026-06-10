@@ -11,16 +11,15 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 interface LanguageOption {
   id: string;
   name: string;
-  dialect?: string;
-  region: string;
+  description: string;
   flagEmoji: string;
 }
 
 const ONBOARDING_LANGUAGES: LanguageOption[] = [
-  { id: 'asante_twi', name: 'Asante Twi', dialect: 'Akan', region: 'Ashanti & Central Regions', flagEmoji: '🇬🇭' },
-  { id: 'fante', name: 'Fante', dialect: 'Akan', region: 'Central & Western Regions', flagEmoji: '🇬🇭' },
-  { id: 'ga', name: 'Ga', region: 'Greater Accra Region', flagEmoji: '🇬🇭' },
-  { id: 'ewe', name: 'Ewe', region: 'Volta Region', flagEmoji: '🇬🇭' },
+  { id: 'asante_twi', name: 'Asante Twi', description: 'Most widely spoken Ghanaian language', flagEmoji: '🇬🇭' },
+  { id: 'fante', name: 'Fante', description: 'Popular in the Central Region', flagEmoji: '🇬🇭' },
+  { id: 'ga', name: 'Ga', description: 'Language of Greater Accra', flagEmoji: '🇬🇭' },
+  { id: 'ewe', name: 'Ewe', description: 'Widely spoken in the Volta Region', flagEmoji: '🇬🇭' },
 ];
 
 export default function LanguageSelectionScreen() {
@@ -100,7 +99,7 @@ export default function LanguageSelectionScreen() {
       </View>
 
       {/* Language Options Grid */}
-      <View style={styles.languagesContainer}>
+      <View style={styles.gridContainer}>
         {ONBOARDING_LANGUAGES.map((lang) => {
           const isSelected = selectedLanguage === lang.id;
           return (
@@ -109,29 +108,20 @@ export default function LanguageSelectionScreen() {
               onPress={() => setSelectedLanguage(lang.id)}
               activeOpacity={0.8}
               style={[
-                styles.languageCard,
+                styles.gridCard,
                 isSelected ? styles.selectedCard : styles.unselectedCard,
               ]}
             >
-              <View style={styles.cardLeft}>
-                <Text style={styles.flagIcon}>{lang.flagEmoji}</Text>
-                <View>
-                  <Text
-                    style={[
-                      styles.languageName,
-                      { color: textColor, fontWeight: isSelected ? '700' : '600' },
-                    ]}
-                  >
-                    {lang.name}
-                  </Text>
-                  <Text style={styles.languageRegion}>{lang.region}</Text>
-                </View>
-              </View>
-              {lang.dialect && (
-                <View style={styles.dialectBadge}>
-                  <Text style={styles.dialectText}>{lang.dialect}</Text>
-                </View>
-              )}
+              <Text style={styles.cardIcon}>{lang.flagEmoji}</Text>
+              <Text
+                style={[
+                  styles.languageName,
+                  { color: textColor, fontWeight: isSelected ? '700' : '600' },
+                ]}
+              >
+                {lang.name}
+              </Text>
+              <Text style={styles.languageDescription}>{lang.description}</Text>
             </TouchableOpacity>
           );
         })}
@@ -224,22 +214,23 @@ const styles = StyleSheet.create({
     maxWidth: 320,
     lineHeight: 18,
   },
-  languagesContainer: {
-    width: '100%',
-    gap: 8,
-    alignItems: 'center',
-    marginVertical: 8,
-  },
-  languageCard: {
+  gridContainer: {
     width: '100%',
     maxWidth: 350,
-    paddingVertical: 12,
-    paddingHorizontal: 16,
-    borderRadius: 15,
-    borderWidth: 1.5,
     flexDirection: 'row',
-    alignItems: 'center',
+    flexWrap: 'wrap',
     justifyContent: 'space-between',
+    rowGap: 12,
+    marginVertical: 8,
+  },
+  gridCard: {
+    width: '48%',
+    aspectRatio: 1,
+    borderRadius: 16,
+    borderWidth: 1.5,
+    padding: 10,
+    justifyContent: 'center',
+    alignItems: 'center',
     backgroundColor: '#FFFFFF',
   },
   unselectedCard: {
@@ -249,32 +240,20 @@ const styles = StyleSheet.create({
     borderColor: '#000000',
     backgroundColor: '#FAF9F6',
   },
-  cardLeft: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 12,
-  },
-  flagIcon: {
-    fontSize: 24,
+  cardIcon: {
+    fontSize: 28,
+    marginBottom: 6,
   },
   languageName: {
-    fontSize: 16,
+    fontSize: 15,
+    textAlign: 'center',
+    marginBottom: 4,
   },
-  languageRegion: {
-    fontSize: 12,
+  languageDescription: {
+    fontSize: 11,
     color: '#71717a',
-    marginTop: 2,
-  },
-  dialectBadge: {
-    backgroundColor: '#F2F2F7',
-    paddingVertical: 4,
-    paddingHorizontal: 8,
-    borderRadius: 6,
-  },
-  dialectText: {
-    fontSize: 10,
-    fontWeight: '600',
-    color: '#3a3a3c',
+    textAlign: 'center',
+    lineHeight: 14,
   },
   footer: {
     width: '100%',
