@@ -15,8 +15,8 @@ export default function ConfirmationScreen() {
   const greenColor = useColor('green');
 
   const handleContinue = () => {
-    // Redirect to the Login screen
-    router.replace('/login' as any);
+    // Redirect to the Onboarding screen
+    router.replace('/onboarding' as any);
   };
 
   return (
@@ -32,7 +32,7 @@ export default function ConfirmationScreen() {
           Verify Your Email
         </Text>
         <Text variant="body" style={[styles.subtitle, { color: mutedTextColor }]}>
-          We've sent a verification link to your email address. Please click the link in your email to verify and activate your account.
+          {"We've"} sent a verification link to your email address. Please click the link in your email to verify and activate your account.
         </Text>
       </View>
 
@@ -44,7 +44,7 @@ export default function ConfirmationScreen() {
           onPress={handleContinue}
           style={styles.continueButton}
         >
-          Continue to Login
+          Continue
         </Button>
       </View>
     </View>

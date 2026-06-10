@@ -109,7 +109,7 @@ const styles = StyleSheet.create({
   footer: {
     width: '100%',
     alignItems: 'center',
-    gap: 10,
+    gap: 4,
   },
   ctaButton: {
     width: '100%',

@@ -1,7 +1,7 @@
 import { Icon } from '@/components/ui/icon';
 import { Text } from '@/components/ui/text';
 import { useColor } from '@/hooks/useColor';
-import { BORDER_RADIUS, CORNERS, FONT_SIZE, HEIGHT } from '@/theme/globals';
+import { BORDER_RADIUS, FONT_SIZE, HEIGHT } from '@/theme/globals';
 import { LucideProps } from 'lucide-react-native';
 import React, { forwardRef, ReactElement, useState } from 'react';
 import {
@@ -22,6 +22,7 @@ export interface InputProps extends Omit<TextInputProps, 'style'> {
   inputStyle?: TextStyle;
   labelStyle?: TextStyle;
   errorStyle?: TextStyle;
+  style?: ViewStyle;
   variant?: 'filled' | 'outline';
   disabled?: boolean;
   type?: 'input' | 'textarea';
@@ -40,6 +41,7 @@ export const Input = forwardRef<TextInput, InputProps>(
       inputStyle,
       labelStyle,
       errorStyle,
+      style,
       variant = 'filled',
       disabled = false,
       type = 'input',
@@ -74,7 +76,7 @@ export const Input = forwardRef<TextInput, InputProps>(
     // Variant styles
     const getVariantStyle = (): ViewStyle => {
       const baseStyle: ViewStyle = {
-        borderRadius: isTextarea ? BORDER_RADIUS : CORNERS,
+        borderRadius: BORDER_RADIUS,
         flexDirection: isTextarea ? 'column' : 'row',
         alignItems: isTextarea ? 'stretch' : 'center',
         minHeight: getHeight(),
@@ -134,7 +136,7 @@ export const Input = forwardRef<TextInput, InputProps>(
       <View style={containerStyle}>
         {/* Input Container */}
         <Pressable
-          style={[getVariantStyle(), disabled && { opacity: 0.6 }]}
+          style={[getVariantStyle(), style, disabled && { opacity: 0.6 }]}
           onPress={() => {
             if (!disabled && ref && 'current' in ref && ref.current) {
               ref.current.focus();

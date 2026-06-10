@@ -152,7 +152,9 @@ export default function SignupScreen() {
             loading={loading}
             style={styles.ctaButton}
           >
-            Continue
+            <Text style={{ textAlign: 'center', width: '100%', color: 'white' }}>
+              Continue
+            </Text>
           </Button>
 
           <View style={styles.loginPrompt}>
@@ -231,10 +233,11 @@ const styles = StyleSheet.create({
   footer: {
     width: '100%',
     alignItems: 'center',
-    gap: 12,
+    gap: 4,
+
   },
   ctaButton: {
-    width: '160%',
+    width: '100%',
     height: 55,
     justifyContent: 'center',
     alignItems: 'center',
