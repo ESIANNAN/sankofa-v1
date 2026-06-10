@@ -7,6 +7,8 @@ import { View } from '@/components/ui/view';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { AvoidKeyboard } from '@/components/ui/avoid-keyboard';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { ChevronLeft } from 'lucide-react-native';
+import { Icon } from '@/components/ui/icon';
 
 interface PurposeOption {
   id: string;
@@ -71,10 +73,10 @@ export default function PurposeSelectionScreen() {
       {/* Top Section: Header & Progress */}
       <View style={styles.topSection}>
         <View style={styles.header}>
-          <Text style={styles.logoLabel}>Purpose</Text>
           <TouchableOpacity onPress={handleBack} style={styles.backButton}>
-            <Text style={[styles.backText, { color: mutedTextColor }]}>Back</Text>
+            <Icon name={ChevronLeft} color={textColor} size={24} />
           </TouchableOpacity>
+          <Text style={styles.logoLabel}>Purpose</Text>
         </View>
 
         <View style={styles.progressContainer}>
@@ -179,7 +181,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    height: 30,
+    height: 40,
     position: 'relative',
   },
   logoLabel: {
@@ -192,12 +194,12 @@ const styles = StyleSheet.create({
   backButton: {
     position: 'absolute',
     left: 0,
-    paddingVertical: 4,
-  },
-  backText: {
-    fontSize: 14,
-    fontWeight: '600',
-    textDecorationLine: 'underline',
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#F2F2F7',
   },
   middleSection: {
     width: '100%',
@@ -286,9 +288,8 @@ const styles = StyleSheet.create({
   },
   ctaButton: {
     width: '100%',
-    maxWidth: 350,
     height: 50,
-    borderRadius: 25,
+    borderRadius: 30,
     backgroundColor: '#000000',
     justifyContent: 'center',
     alignItems: 'center',

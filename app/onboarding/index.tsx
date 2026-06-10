@@ -7,6 +7,8 @@ import { View } from '@/components/ui/view';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { AvoidKeyboard } from '@/components/ui/avoid-keyboard';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { ChevronLeft } from 'lucide-react-native';
+import { Icon } from '@/components/ui/icon';
 
 interface LanguageOption {
   id: string;
@@ -30,6 +32,10 @@ export default function LanguageSelectionScreen() {
 
   const [selectedLanguage, setSelectedLanguage] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+
+  const handleBack = () => {
+    router.replace('/verified-success' as any);
+  };
 
   const handleContinue = async () => {
     if (!selectedLanguage) {
@@ -67,6 +73,9 @@ export default function LanguageSelectionScreen() {
       {/* Top Section: Header & Progress */}
       <View style={styles.topSection}>
         <View style={styles.header}>
+          <TouchableOpacity onPress={handleBack} style={styles.backButton}>
+            <Icon name={ChevronLeft} color={textColor} size={24} />
+          </TouchableOpacity>
           <Text style={styles.logoLabel}>Language Selection</Text>
         </View>
 
@@ -165,9 +174,21 @@ const styles = StyleSheet.create({
   },
   header: {
     width: '100%',
+    flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    height: 30,
+    height: 40,
+    position: 'relative',
+  },
+  backButton: {
+    position: 'absolute',
+    left: 0,
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#F2F2F7',
   },
   logoLabel: {
     fontSize: 14,
@@ -262,9 +283,8 @@ const styles = StyleSheet.create({
   },
   ctaButton: {
     width: '100%',
-    maxWidth: 350,
     height: 50,
-    borderRadius: 25,
+    borderRadius: 30,
     backgroundColor: '#000000',
     justifyContent: 'center',
     alignItems: 'center',
