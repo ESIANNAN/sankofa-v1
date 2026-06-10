@@ -106,7 +106,7 @@ export default function LevelSelectionScreen() {
       </View>
 
       {/* Level Options Grid */}
-      <View style={styles.optionsContainer}>
+      <View style={styles.gridContainer}>
         {ONBOARDING_LEVELS.map((option) => {
           const isSelected = selectedLevel === option.id;
           return (
@@ -115,24 +115,20 @@ export default function LevelSelectionScreen() {
               onPress={() => setSelectedLevel(option.id)}
               activeOpacity={0.8}
               style={[
-                styles.optionCard,
+                styles.gridCard,
                 isSelected ? styles.selectedCard : styles.unselectedCard,
               ]}
             >
-              <View style={styles.cardLeft}>
-                <Text style={styles.cardIcon}>{option.iconEmoji}</Text>
-                <View style={{ flex: 1 }}>
-                  <Text
-                    style={[
-                      styles.optionTitle,
-                      { color: textColor, fontWeight: isSelected ? '700' : '600' },
-                    ]}
-                  >
-                    {option.title}
-                  </Text>
-                  <Text style={styles.optionDescription}>{option.description}</Text>
-                </View>
-              </View>
+              <Text style={styles.cardIcon}>{option.iconEmoji}</Text>
+              <Text
+                style={[
+                  styles.optionTitle,
+                  { color: textColor, fontWeight: isSelected ? '700' : '600' },
+                ]}
+              >
+                {option.title}
+              </Text>
+              <Text style={styles.optionDescription}>{option.description}</Text>
             </TouchableOpacity>
           );
         })}
@@ -237,20 +233,22 @@ const styles = StyleSheet.create({
     maxWidth: 320,
     lineHeight: 18,
   },
-  optionsContainer: {
-    width: '100%',
-    gap: 8,
-    alignItems: 'center',
-    marginVertical: 8,
-  },
-  optionCard: {
+  gridContainer: {
     width: '100%',
     maxWidth: 350,
-    paddingVertical: 12,
-    paddingHorizontal: 16,
-    borderRadius: 15,
-    borderWidth: 1.5,
     flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'space-between',
+    rowGap: 12,
+    marginVertical: 8,
+  },
+  gridCard: {
+    width: '48%',
+    aspectRatio: 1,
+    borderRadius: 16,
+    borderWidth: 1.5,
+    padding: 10,
+    justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#FFFFFF',
   },
@@ -261,23 +259,20 @@ const styles = StyleSheet.create({
     borderColor: '#000000',
     backgroundColor: '#FAF9F6',
   },
-  cardLeft: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 14,
-    flex: 1,
-  },
   cardIcon: {
-    fontSize: 24,
+    fontSize: 28,
+    marginBottom: 6,
   },
   optionTitle: {
-    fontSize: 16,
+    fontSize: 15,
+    textAlign: 'center',
+    marginBottom: 4,
   },
   optionDescription: {
-    fontSize: 12,
+    fontSize: 11,
     color: '#71717a',
-    marginTop: 2,
-    lineHeight: 16,
+    textAlign: 'center',
+    lineHeight: 14,
   },
   footer: {
     width: '100%',

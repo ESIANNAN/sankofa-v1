@@ -17,7 +17,7 @@ interface SummaryOption {
 
 export default function OnboardingSummaryScreen() {
   const insets = useSafeAreaInsets();
-  const backgroundColor = '#FFFFFF'; // Clean white background as requested
+  const backgroundColor = '#FFFFFF';
   const textColor = '#000000';
   const mutedTextColor = '#71717a';
 
@@ -100,7 +100,7 @@ export default function OnboardingSummaryScreen() {
     try {
       // Store user preferences completion state
       await AsyncStorage.setItem('onboarding_completed', 'true');
-      
+
       // Navigate to the main application Home screen
       router.replace('/(tabs)/(home)');
     } catch (error) {
@@ -152,8 +152,7 @@ export default function OnboardingSummaryScreen() {
 
         <View style={styles.messageSection}>
           <Text variant="heading" style={[styles.title, { color: textColor }]}>
-            Your personalized learning journey is ready.
-          </Text>
+            You’re all set!          </Text>
         </View>
       </View>
 
