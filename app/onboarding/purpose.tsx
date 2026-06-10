@@ -136,10 +136,11 @@ export default function PurposeSelectionScreen() {
             size="lg"
             onPress={handleContinue}
             loading={loading}
-            style={[
-              styles.ctaButton,
-              !selectedPurpose ? { opacity: 0.5 } : undefined,
-            ]}
+            style={
+              !selectedPurpose
+                ? [styles.ctaButton, { opacity: 0.5 }]
+                : [styles.ctaButton]
+            }
             textStyle={styles.ctaButtonText}
             disabled={!selectedPurpose || loading}
           >

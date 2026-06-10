@@ -136,10 +136,11 @@ export default function DailyGoalSelectionScreen() {
             size="lg"
             onPress={handleContinue}
             loading={loading}
-            style={[
-              styles.ctaButton,
-              !selectedGoal ? { opacity: 0.5 } : undefined,
-            ]}
+            style={
+              !selectedGoal
+                ? [styles.ctaButton, { opacity: 0.5 }]
+                : [styles.ctaButton]
+            }
             textStyle={styles.ctaButtonText}
             disabled={!selectedGoal || loading}
           >

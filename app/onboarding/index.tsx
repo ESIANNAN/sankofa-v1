@@ -135,10 +135,11 @@ export default function LanguageSelectionScreen() {
             size="lg"
             onPress={handleContinue}
             loading={loading}
-            style={[
-              styles.ctaButton,
-              !selectedLanguage ? { opacity: 0.5 } : undefined,
-            ]}
+            style={
+              !selectedLanguage
+                ? [styles.ctaButton, { opacity: 0.5 }]
+                : [styles.ctaButton]
+            }
             textStyle={styles.ctaButtonText}
             disabled={!selectedLanguage || loading}
           >

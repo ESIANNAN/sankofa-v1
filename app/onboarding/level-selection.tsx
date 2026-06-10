@@ -136,10 +136,11 @@ export default function LevelSelectionScreen() {
             size="lg"
             onPress={handleContinue}
             loading={loading}
-            style={[
-              styles.ctaButton,
-              !selectedLevel ? { opacity: 0.5 } : undefined,
-            ]}
+            style={
+              !selectedLevel
+                ? [styles.ctaButton, { opacity: 0.5 }]
+                : [styles.ctaButton]
+            }
             textStyle={styles.ctaButtonText}
             disabled={!selectedLevel || loading}
           >
