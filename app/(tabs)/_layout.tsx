@@ -1,9 +1,7 @@
 import { Platform } from 'react-native';
 import { useColor } from '@/hooks/useColor';
-import { isLiquidGlassAvailable } from 'expo-glass-effect';
 import MaterialIcons from '@expo/vector-icons/Feather';
 import {
-  Badge,
   Icon,
   Label,
   NativeTabs,
