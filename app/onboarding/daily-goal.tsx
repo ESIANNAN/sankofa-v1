@@ -147,11 +147,7 @@ export default function DailyGoalSelectionScreen() {
           size="lg"
           onPress={handleContinue}
           loading={loading}
-          style={
-            !selectedGoal
-              ? [styles.ctaButton, { opacity: 0.5 }]
-              : [styles.ctaButton]
-          }
+          style={styles.ctaButton}
           textStyle={styles.ctaButtonText}
           disabled={!selectedGoal || loading}
         >
@@ -287,14 +283,11 @@ const styles = StyleSheet.create({
   },
   ctaButton: {
     width: '100%',
-    height: 50,
-    borderRadius: 30,
-    backgroundColor: '#000000',
+    height: 55,
     justifyContent: 'center',
     alignItems: 'center',
   },
   ctaButtonText: {
-    color: '#FFFFFF',
     fontWeight: '600',
     fontSize: 16,
     textAlign: 'center',

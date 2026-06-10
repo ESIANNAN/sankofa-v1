@@ -324,14 +324,11 @@ const styles = StyleSheet.create({
   },
   ctaButton: {
     width: '100%',
-    height: 50,
-    borderRadius: 30,
-    backgroundColor: '#000000',
+    height: 55,
     justifyContent: 'center',
     alignItems: 'center',
   },
   ctaButtonText: {
-    color: '#FFFFFF',
     fontWeight: '600',
     fontSize: 16,
     textAlign: 'center',
