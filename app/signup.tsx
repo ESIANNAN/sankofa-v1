@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { StyleSheet, ScrollView, Platform, TouchableOpacity } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { router } from 'expo-router';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -63,7 +64,12 @@ export default function SignupScreen() {
     if (!isValid) return;
 
     setLoading(true);
-    // Simulate signup API call and navigate to Confirmation Screen
+    // Simulate signup API call, save user name, and navigate to Confirmation Screen
+    try {
+      await AsyncStorage.setItem('user_name', fullName.trim());
+    } catch (e) {
+      console.warn('Error saving user name:', e);
+    }
     setTimeout(() => {
       setLoading(false);
       router.replace('/confirmation' as any);

@@ -85,7 +85,7 @@ export default function LoginScreen() {
     // Simulate login and redirect to home tabs
     setTimeout(() => {
       setLoading(false);
-      router.replace('/(tabs)/(home)');
+      router.replace('/home' as any);
     }, 1200);
   };
 
@@ -102,7 +102,7 @@ export default function LoginScreen() {
     console.log('Google Auth Triggered');
     setTimeout(() => {
       setGoogleLoading(false);
-      router.replace('/(tabs)/(home)');
+      router.replace('/home' as any);
     }, 1200);
   };
 
@@ -111,7 +111,7 @@ export default function LoginScreen() {
     console.log('Apple Auth Triggered');
     setTimeout(() => {
       setAppleLoading(false);
-      router.replace('/(tabs)/(home)');
+      router.replace('/home' as any);
     }, 1200);
   };
 

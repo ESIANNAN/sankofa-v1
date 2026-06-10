@@ -30,7 +30,7 @@ export default function TabsLayout() {
       labelVisibilityMode='labeled'
       disableTransparentOnScrollEdge={true}
     >
-      <NativeTabs.Trigger name='(home)'>
+      <NativeTabs.Trigger name='home'>
         {Platform.select({
           ios: <Icon sf='house.fill' />,
           android: (
@@ -40,28 +40,44 @@ export default function TabsLayout() {
         <Label>Home</Label>
       </NativeTabs.Trigger>
 
-      <NativeTabs.Trigger name='settings'>
+      <NativeTabs.Trigger name='leaderboard'>
         {Platform.select({
-          ios: <Icon sf='gear' />,
+          ios: <Icon sf='trophy.fill' />,
           android: (
-            <Icon src={<VectorIcon family={MaterialIcons} name='settings' />} />
+            <Icon src={<VectorIcon family={MaterialIcons} name='award' />} />
           ),
         })}
-        <Label>Settings</Label>
-        <Badge>1</Badge>
+        <Label>Leaderboard</Label>
       </NativeTabs.Trigger>
 
-      <NativeTabs.Trigger
-        name='search'
-        role={isLiquidGlassAvailable() ? 'search' : undefined}
-      >
+      <NativeTabs.Trigger name='explore'>
         {Platform.select({
-          ios: <Icon sf='magnifyingglass' />,
+          ios: <Icon sf='globe' />,
           android: (
-            <Icon src={<VectorIcon family={MaterialIcons} name='search' />} />
+            <Icon src={<VectorIcon family={MaterialIcons} name='compass' />} />
           ),
         })}
-        <Label>Search</Label>
+        <Label>Explore</Label>
+      </NativeTabs.Trigger>
+
+      <NativeTabs.Trigger name='journal'>
+        {Platform.select({
+          ios: <Icon sf='book.closed.fill' />,
+          android: (
+            <Icon src={<VectorIcon family={MaterialIcons} name='book-open' />} />
+          ),
+        })}
+        <Label>Journal</Label>
+      </NativeTabs.Trigger>
+
+      <NativeTabs.Trigger name='profile'>
+        {Platform.select({
+          ios: <Icon sf='person.crop.circle.fill' />,
+          android: (
+            <Icon src={<VectorIcon family={MaterialIcons} name='user' />} />
+          ),
+        })}
+        <Label>Profile</Label>
       </NativeTabs.Trigger>
     </NativeTabs>
   );

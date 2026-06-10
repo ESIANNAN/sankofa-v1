@@ -104,10 +104,10 @@ export default function OnboardingSummaryScreen() {
       await AsyncStorage.setItem('onboarding_completed', 'true');
 
       // Navigate to the main application Home screen
-      router.replace('/(tabs)/(home)');
+      router.replace('/home' as any);
     } catch (error) {
       console.warn('Error saving preferences completion:', error);
-      router.replace('/(tabs)/(home)');
+      router.replace('/home' as any);
     } finally {
       setLoading(false);
     }

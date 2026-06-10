@@ -2,7 +2,7 @@ import React from 'react';
 import { Icon } from '@/components/ui/icon';
 import { useColor } from '@/hooks/useColor';
 import { Tabs } from 'expo-router';
-import { Home, Search, Settings } from 'lucide-react-native';
+import { Home, Trophy, Compass, BookOpen, User } from 'lucide-react-native';
 
 export default function WebTabsLayout() {
   const primary = useColor('primary');
@@ -17,6 +17,13 @@ export default function WebTabsLayout() {
       <Tabs.Screen
         name='index'
         options={{
+          href: null,
+        }}
+      />
+
+      <Tabs.Screen
+        name='home'
+        options={{
           title: 'Home',
           tabBarIcon: ({ color }) => (
             <Icon name={Home} size={24} color={color} />
@@ -25,21 +32,41 @@ export default function WebTabsLayout() {
       />
 
       <Tabs.Screen
-        name='settings'
+        name='leaderboard'
         options={{
-          title: 'Settings',
+          title: 'Leaderboard',
           tabBarIcon: ({ color }) => (
-            <Icon name={Settings} size={24} color={color} />
+            <Icon name={Trophy} size={24} color={color} />
           ),
         }}
       />
 
       <Tabs.Screen
-        name='search'
+        name='explore'
         options={{
-          title: 'Search',
+          title: 'Explore',
           tabBarIcon: ({ color }) => (
-            <Icon name={Search} size={24} color={color} />
+            <Icon name={Compass} size={24} color={color} />
+          ),
+        }}
+      />
+
+      <Tabs.Screen
+        name='journal'
+        options={{
+          title: 'Journal',
+          tabBarIcon: ({ color }) => (
+            <Icon name={BookOpen} size={24} color={color} />
+          ),
+        }}
+      />
+
+      <Tabs.Screen
+        name='profile'
+        options={{
+          title: 'Profile',
+          tabBarIcon: ({ color }) => (
+            <Icon name={User} size={24} color={color} />
           ),
         }}
       />
