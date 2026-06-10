@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
-import { StyleSheet, ScrollView, Platform, Image, TouchableOpacity } from 'react-native';
+import { StyleSheet, Image, TouchableOpacity } from 'react-native';
 import { router } from 'expo-router';
 import { Button } from '@/components/ui/button';
 import { Text } from '@/components/ui/text';
 import { View } from '@/components/ui/view';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { AvoidKeyboard } from '@/components/ui/avoid-keyboard';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 interface LanguageOption {
   id: string;
@@ -23,6 +24,7 @@ const ONBOARDING_LANGUAGES: LanguageOption[] = [
 ];
 
 export default function LanguageSelectionScreen() {
+  const insets = useSafeAreaInsets();
   const backgroundColor = '#FFFFFF'; // Clean white background
   const textColor = '#000000';
   const mutedTextColor = '#71717a';
@@ -53,25 +55,32 @@ export default function LanguageSelectionScreen() {
   };
 
   return (
-    <ScrollView
-      contentContainerStyle={[styles.scrollContainer, { backgroundColor }]}
-      showsVerticalScrollIndicator={false}
+    <View
+      style={[
+        styles.container,
+        {
+          backgroundColor,
+          paddingTop: Math.max(insets.top, 16),
+          paddingBottom: Math.max(insets.bottom, 16),
+        },
+      ]}
     >
-      <View style={styles.container}>
-        {/* Top Header Section */}
+      {/* Top Section: Header & Progress */}
+      <View style={styles.topSection}>
         <View style={styles.header}>
           <Text style={styles.logoLabel}>Language Selection</Text>
         </View>
 
-        {/* Progress Indicator */}
         <View style={styles.progressContainer}>
           <View style={styles.progressBarBackground}>
             <View style={[styles.progressBarFill, { width: '20%' }]} />
           </View>
           <Text style={[styles.progressText, { color: mutedTextColor }]}>Step 1 of 5</Text>
         </View>
+      </View>
 
-        {/* Hero Image */}
+      {/* Middle Section: Hero & Question */}
+      <View style={styles.middleSection}>
         <View style={styles.heroContainer}>
           <Image
             source={require('@/assets/images/learning-hero.png')}
@@ -80,7 +89,6 @@ export default function LanguageSelectionScreen() {
           />
         </View>
 
-        {/* Question & Subtitle Section */}
         <View style={styles.questionSection}>
           <Text variant="heading" style={[styles.title, { color: textColor }]}>
             Which language will you learn?
@@ -89,87 +97,87 @@ export default function LanguageSelectionScreen() {
             Start with one language. You can always add more later.
           </Text>
         </View>
-
-        {/* Language Options Grid */}
-        <View style={styles.languagesContainer}>
-          {ONBOARDING_LANGUAGES.map((lang) => {
-            const isSelected = selectedLanguage === lang.id;
-            return (
-              <TouchableOpacity
-                key={lang.id}
-                onPress={() => setSelectedLanguage(lang.id)}
-                activeOpacity={0.8}
-                style={[
-                  styles.languageCard,
-                  isSelected ? styles.selectedCard : styles.unselectedCard,
-                ]}
-              >
-                <View style={styles.cardLeft}>
-                  <Text style={styles.flagIcon}>{lang.flagEmoji}</Text>
-                  <View>
-                    <Text
-                      style={[
-                        styles.languageName,
-                        { color: textColor, fontWeight: isSelected ? '700' : '600' },
-                      ]}
-                    >
-                      {lang.name}
-                    </Text>
-                    <Text style={styles.languageRegion}>{lang.region}</Text>
-                  </View>
-                </View>
-                {lang.dialect && (
-                  <View style={styles.dialectBadge}>
-                    <Text style={styles.dialectText}>{lang.dialect}</Text>
-                  </View>
-                )}
-              </TouchableOpacity>
-            );
-          })}
-        </View>
-
-        {/* Footer Actions */}
-        <View style={styles.footer}>
-          <Button
-            variant="default"
-            size="lg"
-            onPress={handleContinue}
-            loading={loading}
-            style={
-              !selectedLanguage
-                ? [styles.ctaButton, { opacity: 0.5 }]
-                : [styles.ctaButton]
-            }
-            textStyle={styles.ctaButtonText}
-            disabled={!selectedLanguage || loading}
-          >
-            Continue
-          </Button>
-        </View>
-
-        <AvoidKeyboard offset={20} />
       </View>
-    </ScrollView>
+
+      {/* Language Options Grid */}
+      <View style={styles.languagesContainer}>
+        {ONBOARDING_LANGUAGES.map((lang) => {
+          const isSelected = selectedLanguage === lang.id;
+          return (
+            <TouchableOpacity
+              key={lang.id}
+              onPress={() => setSelectedLanguage(lang.id)}
+              activeOpacity={0.8}
+              style={[
+                styles.languageCard,
+                isSelected ? styles.selectedCard : styles.unselectedCard,
+              ]}
+            >
+              <View style={styles.cardLeft}>
+                <Text style={styles.flagIcon}>{lang.flagEmoji}</Text>
+                <View>
+                  <Text
+                    style={[
+                      styles.languageName,
+                      { color: textColor, fontWeight: isSelected ? '700' : '600' },
+                    ]}
+                  >
+                    {lang.name}
+                  </Text>
+                  <Text style={styles.languageRegion}>{lang.region}</Text>
+                </View>
+              </View>
+              {lang.dialect && (
+                <View style={styles.dialectBadge}>
+                  <Text style={styles.dialectText}>{lang.dialect}</Text>
+                </View>
+              )}
+            </TouchableOpacity>
+          );
+        })}
+      </View>
+
+      {/* Footer Actions */}
+      <View style={styles.footer}>
+        <Button
+          variant="default"
+          size="lg"
+          onPress={handleContinue}
+          loading={loading}
+          style={
+            !selectedLanguage
+              ? [styles.ctaButton, { opacity: 0.5 }]
+              : [styles.ctaButton]
+          }
+          textStyle={styles.ctaButtonText}
+          disabled={!selectedLanguage || loading}
+        >
+          Continue
+        </Button>
+      </View>
+
+      <AvoidKeyboard offset={20} />
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  scrollContainer: {
-    flexGrow: 1,
-  },
   container: {
     flex: 1,
     paddingHorizontal: 24,
-    paddingTop: Platform.OS === 'ios' ? 60 : 30,
-    paddingBottom: 40,
     justifyContent: 'space-between',
     alignItems: 'center',
-    minHeight: '100%',
+  },
+  topSection: {
+    width: '100%',
+    alignItems: 'center',
+    gap: 4,
   },
   header: {
     width: '100%',
     alignItems: 'center',
-    marginBottom: 10,
+    justifyContent: 'center',
+    height: 30,
   },
   logoLabel: {
     fontSize: 14,
@@ -178,43 +186,54 @@ const styles = StyleSheet.create({
     color: '#71717a',
     textTransform: 'uppercase',
   },
-  heroContainer: {
+  middleSection: {
     width: '100%',
     alignItems: 'center',
+    flexShrink: 1,
+  },
+  heroContainer: {
+    width: '100%',
+    height: 120,
+    maxHeight: 140,
+    alignItems: 'center',
     justifyContent: 'center',
-    marginVertical: 12,
+    marginVertical: 8,
+    flexShrink: 1,
   },
   heroImage: {
-    width: 320,
-    height: 180,
+    width: '100%',
+    height: '100%',
+    maxWidth: 280,
   },
   questionSection: {
     width: '100%',
     alignItems: 'center',
-    marginBottom: 20,
+    marginTop: 4,
+    marginBottom: 8,
   },
   title: {
-    fontSize: 26,
+    fontSize: 22,
     fontWeight: '800',
     letterSpacing: -0.5,
-    marginBottom: 6,
+    marginBottom: 4,
     textAlign: 'center',
   },
   subtitle: {
-    fontSize: 15,
+    fontSize: 14,
     textAlign: 'center',
     maxWidth: 320,
-    lineHeight: 22,
+    lineHeight: 18,
   },
   languagesContainer: {
     width: '100%',
-    gap: 12,
-    marginBottom: 24,
+    gap: 8,
     alignItems: 'center',
+    marginVertical: 8,
   },
   languageCard: {
-    width: 350,
-    paddingVertical: 14,
+    width: '100%',
+    maxWidth: 350,
+    paddingVertical: 12,
     paddingHorizontal: 16,
     borderRadius: 15,
     borderWidth: 1.5,
@@ -260,11 +279,13 @@ const styles = StyleSheet.create({
   footer: {
     width: '100%',
     alignItems: 'center',
+    marginTop: 8,
   },
   ctaButton: {
-    width: 350,
-    height: 55,
-    borderRadius: 30,
+    width: '100%',
+    maxWidth: 350,
+    height: 50,
+    borderRadius: 25,
     backgroundColor: '#000000',
     justifyContent: 'center',
     alignItems: 'center',
@@ -276,10 +297,10 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   progressContainer: {
-    width: 350,
+    width: '100%',
+    maxWidth: 350,
     alignItems: 'center',
-    marginVertical: 8,
-    gap: 8,
+    gap: 6,
   },
   progressBarBackground: {
     width: '100%',
@@ -293,7 +314,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#000000',
   },
   progressText: {
-    fontSize: 12,
+    fontSize: 11,
     fontWeight: '600',
     letterSpacing: 0.5,
     textTransform: 'uppercase',

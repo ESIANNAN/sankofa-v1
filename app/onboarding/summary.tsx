@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, ScrollView, Platform, Image, TouchableOpacity } from 'react-native';
+import { StyleSheet, Image, TouchableOpacity } from 'react-native';
 import { router } from 'expo-router';
 import { Button } from '@/components/ui/button';
 import { Text } from '@/components/ui/text';
 import { View } from '@/components/ui/view';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { AvoidKeyboard } from '@/components/ui/avoid-keyboard';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 interface SummaryOption {
   label: string;
@@ -15,6 +16,7 @@ interface SummaryOption {
 }
 
 export default function OnboardingSummaryScreen() {
+  const insets = useSafeAreaInsets();
   const backgroundColor = '#FFFFFF'; // Clean white background as requested
   const textColor = '#000000';
   const mutedTextColor = '#71717a';
@@ -114,25 +116,32 @@ export default function OnboardingSummaryScreen() {
   };
 
   return (
-    <ScrollView
-      contentContainerStyle={[styles.scrollContainer, { backgroundColor }]}
-      showsVerticalScrollIndicator={false}
+    <View
+      style={[
+        styles.container,
+        {
+          backgroundColor,
+          paddingTop: Math.max(insets.top, 16),
+          paddingBottom: Math.max(insets.bottom, 16),
+        },
+      ]}
     >
-      <View style={styles.container}>
-        {/* Top Header Section */}
+      {/* Top Section: Header & Progress */}
+      <View style={styles.topSection}>
         <View style={styles.header}>
           <Text style={styles.logoLabel}>{"You're All Set!"}</Text>
         </View>
 
-        {/* Progress Indicator */}
         <View style={styles.progressContainer}>
           <View style={styles.progressBarBackground}>
             <View style={[styles.progressBarFill, { width: '100%' }]} />
           </View>
           <Text style={[styles.progressText, { color: mutedTextColor }]}>Step 5 of 5</Text>
         </View>
+      </View>
 
-        {/* Hero Image */}
+      {/* Middle Section: Hero & Question */}
+      <View style={styles.middleSection}>
         <View style={styles.heroContainer}>
           <Image
             source={require('@/assets/images/success-hero.png')}
@@ -141,74 +150,73 @@ export default function OnboardingSummaryScreen() {
           />
         </View>
 
-        {/* Main Message & Subtitle */}
         <View style={styles.messageSection}>
           <Text variant="heading" style={[styles.title, { color: textColor }]}>
             Your personalized learning journey is ready.
           </Text>
         </View>
-
-        {/* Selected Preferences Summary Cards */}
-        <View style={styles.summaryContainer}>
-          {selections.map((item, index) => (
-            <TouchableOpacity
-              key={index}
-              onPress={() => handleEditPreference(item.route)}
-              style={styles.summaryCard}
-              activeOpacity={0.7}
-            >
-              <View style={styles.cardLeft}>
-                <Text style={styles.cardIcon}>{item.iconEmoji}</Text>
-                <View>
-                  <Text style={[styles.cardLabel, { color: mutedTextColor }]}>
-                    {item.label}
-                  </Text>
-                  <Text style={[styles.cardValue, { color: textColor }]}>
-                    {item.value}
-                  </Text>
-                </View>
-              </View>
-            </TouchableOpacity>
-          ))}
-        </View>
-
-        {/* Footer Action Button */}
-        <View style={styles.footer}>
-          <Button
-            variant="default"
-            size="lg"
-            onPress={handleStartLearning}
-            loading={loading}
-            style={styles.ctaButton}
-            textStyle={styles.ctaButtonText}
-          >
-            Start Learning
-          </Button>
-        </View>
-
-        <AvoidKeyboard offset={20} />
       </View>
-    </ScrollView>
+
+      {/* Selected Preferences Summary Cards */}
+      <View style={styles.summaryContainer}>
+        {selections.map((item, index) => (
+          <TouchableOpacity
+            key={index}
+            onPress={() => handleEditPreference(item.route)}
+            style={styles.summaryCard}
+            activeOpacity={0.7}
+          >
+            <View style={styles.cardLeft}>
+              <Text style={styles.cardIcon}>{item.iconEmoji}</Text>
+              <View>
+                <Text style={[styles.cardLabel, { color: mutedTextColor }]}>
+                  {item.label}
+                </Text>
+                <Text style={[styles.cardValue, { color: textColor }]}>
+                  {item.value}
+                </Text>
+              </View>
+            </View>
+          </TouchableOpacity>
+        ))}
+      </View>
+
+      {/* Footer Action Button */}
+      <View style={styles.footer}>
+        <Button
+          variant="default"
+          size="lg"
+          onPress={handleStartLearning}
+          loading={loading}
+          style={styles.ctaButton}
+          textStyle={styles.ctaButtonText}
+        >
+          Start Learning
+        </Button>
+      </View>
+
+      <AvoidKeyboard offset={20} />
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  scrollContainer: {
-    flexGrow: 1,
-  },
   container: {
     flex: 1,
     paddingHorizontal: 24,
-    paddingTop: Platform.OS === 'ios' ? 60 : 30,
-    paddingBottom: 40,
     justifyContent: 'space-between',
     alignItems: 'center',
-    minHeight: '100%',
+  },
+  topSection: {
+    width: '100%',
+    alignItems: 'center',
+    gap: 4,
   },
   header: {
     width: '100%',
     alignItems: 'center',
-    marginBottom: 10,
+    justifyContent: 'center',
+    height: 30,
   },
   logoLabel: {
     fontSize: 14,
@@ -217,39 +225,50 @@ const styles = StyleSheet.create({
     color: '#71717a',
     textTransform: 'uppercase',
   },
-  heroContainer: {
+  middleSection: {
     width: '100%',
     alignItems: 'center',
+    flexShrink: 1,
+  },
+  heroContainer: {
+    width: '100%',
+    height: 120,
+    maxHeight: 140,
+    alignItems: 'center',
     justifyContent: 'center',
-    marginVertical: 12,
+    marginVertical: 8,
+    flexShrink: 1,
   },
   heroImage: {
-    width: 320,
-    height: 180,
+    width: '100%',
+    height: '100%',
+    maxWidth: 280,
   },
   messageSection: {
     width: '100%',
     alignItems: 'center',
-    marginBottom: 20,
+    marginTop: 4,
+    marginBottom: 8,
   },
   title: {
-    fontSize: 24,
+    fontSize: 20,
     fontWeight: '800',
     letterSpacing: -0.5,
-    marginBottom: 6,
+    marginBottom: 4,
     textAlign: 'center',
     maxWidth: 320,
-    lineHeight: 30,
+    lineHeight: 26,
   },
   summaryContainer: {
     width: '100%',
-    gap: 12,
-    marginBottom: 24,
+    gap: 6,
     alignItems: 'center',
+    marginVertical: 8,
   },
   summaryCard: {
-    width: 350,
-    paddingVertical: 14,
+    width: '100%',
+    maxWidth: 350,
+    paddingVertical: 10,
     paddingHorizontal: 16,
     borderRadius: 15,
     borderWidth: 1,
@@ -268,24 +287,26 @@ const styles = StyleSheet.create({
     fontSize: 24,
   },
   cardLabel: {
-    fontSize: 12,
+    fontSize: 11,
     fontWeight: '500',
     textTransform: 'uppercase',
     letterSpacing: 0.5,
   },
   cardValue: {
-    fontSize: 15,
+    fontSize: 14,
     fontWeight: '600',
     marginTop: 2,
   },
   footer: {
     width: '100%',
     alignItems: 'center',
+    marginTop: 8,
   },
   ctaButton: {
-    width: 350,
-    height: 55,
-    borderRadius: 30,
+    width: '100%',
+    maxWidth: 350,
+    height: 50,
+    borderRadius: 25,
     backgroundColor: '#000000',
     justifyContent: 'center',
     alignItems: 'center',
@@ -297,10 +318,10 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   progressContainer: {
-    width: 350,
+    width: '100%',
+    maxWidth: 350,
     alignItems: 'center',
-    marginVertical: 8,
-    gap: 8,
+    gap: 6,
   },
   progressBarBackground: {
     width: '100%',
@@ -314,7 +335,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#000000',
   },
   progressText: {
-    fontSize: 12,
+    fontSize: 11,
     fontWeight: '600',
     letterSpacing: 0.5,
     textTransform: 'uppercase',

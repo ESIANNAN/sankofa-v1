@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
-import { StyleSheet, ScrollView, Platform, Image, TouchableOpacity } from 'react-native';
+import { StyleSheet, Image, TouchableOpacity } from 'react-native';
 import { router } from 'expo-router';
 import { Button } from '@/components/ui/button';
 import { Text } from '@/components/ui/text';
 import { View } from '@/components/ui/view';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { AvoidKeyboard } from '@/components/ui/avoid-keyboard';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 interface PurposeOption {
   id: string;
@@ -22,6 +23,7 @@ const ONBOARDING_PURPOSES: PurposeOption[] = [
 ];
 
 export default function PurposeSelectionScreen() {
+  const insets = useSafeAreaInsets();
   const backgroundColor = '#FFFFFF'; // Clean white background as requested
   const textColor = '#000000';
   const mutedTextColor = '#71717a';
@@ -56,12 +58,18 @@ export default function PurposeSelectionScreen() {
   };
 
   return (
-    <ScrollView
-      contentContainerStyle={[styles.scrollContainer, { backgroundColor }]}
-      showsVerticalScrollIndicator={false}
+    <View
+      style={[
+        styles.container,
+        {
+          backgroundColor,
+          paddingTop: Math.max(insets.top, 16),
+          paddingBottom: Math.max(insets.bottom, 16),
+        },
+      ]}
     >
-      <View style={styles.container}>
-        {/* Top Header Section */}
+      {/* Top Section: Header & Progress */}
+      <View style={styles.topSection}>
         <View style={styles.header}>
           <Text style={styles.logoLabel}>Purpose</Text>
           <TouchableOpacity onPress={handleBack} style={styles.backButton}>
@@ -69,15 +77,16 @@ export default function PurposeSelectionScreen() {
           </TouchableOpacity>
         </View>
 
-        {/* Progress Indicator */}
         <View style={styles.progressContainer}>
           <View style={styles.progressBarBackground}>
             <View style={[styles.progressBarFill, { width: '40%' }]} />
           </View>
           <Text style={[styles.progressText, { color: mutedTextColor }]}>Step 2 of 5</Text>
         </View>
+      </View>
 
-        {/* Hero Image */}
+      {/* Middle Section: Hero & Question */}
+      <View style={styles.middleSection}>
         <View style={styles.heroContainer}>
           <Image
             source={require('@/assets/images/purpose-hero.png')}
@@ -86,7 +95,6 @@ export default function PurposeSelectionScreen() {
           />
         </View>
 
-        {/* Question & Subtitle Section */}
         <View style={styles.questionSection}>
           <Text variant="heading" style={[styles.title, { color: textColor }]}>
             What{"'"}s your learning goal?
@@ -95,84 +103,83 @@ export default function PurposeSelectionScreen() {
             Choose the reason that best matches your motivation.
           </Text>
         </View>
-
-        {/* Purpose Options Grid */}
-        <View style={styles.optionsContainer}>
-          {ONBOARDING_PURPOSES.map((option) => {
-            const isSelected = selectedPurpose === option.id;
-            return (
-              <TouchableOpacity
-                key={option.id}
-                onPress={() => setSelectedPurpose(option.id)}
-                activeOpacity={0.8}
-                style={[
-                  styles.optionCard,
-                  isSelected ? styles.selectedCard : styles.unselectedCard,
-                ]}
-              >
-                <View style={styles.cardLeft}>
-                  <Text style={styles.cardIcon}>{option.iconEmoji}</Text>
-                  <View style={{ flex: 1 }}>
-                    <Text
-                      style={[
-                        styles.optionTitle,
-                        { color: textColor, fontWeight: isSelected ? '700' : '600' },
-                      ]}
-                    >
-                      {option.title}
-                    </Text>
-                    <Text style={styles.optionDescription}>{option.description}</Text>
-                  </View>
-                </View>
-              </TouchableOpacity>
-            );
-          })}
-        </View>
-
-        {/* Footer Actions */}
-        <View style={styles.footer}>
-          <Button
-            variant="default"
-            size="lg"
-            onPress={handleContinue}
-            loading={loading}
-            style={
-              !selectedPurpose
-                ? [styles.ctaButton, { opacity: 0.5 }]
-                : [styles.ctaButton]
-            }
-            textStyle={styles.ctaButtonText}
-            disabled={!selectedPurpose || loading}
-          >
-            Continue
-          </Button>
-        </View>
-
-        <AvoidKeyboard offset={20} />
       </View>
-    </ScrollView>
+
+      {/* Purpose Options Grid */}
+      <View style={styles.optionsContainer}>
+        {ONBOARDING_PURPOSES.map((option) => {
+          const isSelected = selectedPurpose === option.id;
+          return (
+            <TouchableOpacity
+              key={option.id}
+              onPress={() => setSelectedPurpose(option.id)}
+              activeOpacity={0.8}
+              style={[
+                styles.optionCard,
+                isSelected ? styles.selectedCard : styles.unselectedCard,
+              ]}
+            >
+              <View style={styles.cardLeft}>
+                <Text style={styles.cardIcon}>{option.iconEmoji}</Text>
+                <View style={{ flex: 1 }}>
+                  <Text
+                    style={[
+                      styles.optionTitle,
+                      { color: textColor, fontWeight: isSelected ? '700' : '600' },
+                    ]}
+                  >
+                    {option.title}
+                  </Text>
+                  <Text style={styles.optionDescription}>{option.description}</Text>
+                </View>
+              </View>
+            </TouchableOpacity>
+          );
+        })}
+      </View>
+
+      {/* Footer Actions */}
+      <View style={styles.footer}>
+        <Button
+          variant="default"
+          size="lg"
+          onPress={handleContinue}
+          loading={loading}
+          style={
+            !selectedPurpose
+              ? [styles.ctaButton, { opacity: 0.5 }]
+              : [styles.ctaButton]
+          }
+          textStyle={styles.ctaButtonText}
+          disabled={!selectedPurpose || loading}
+        >
+          Continue
+        </Button>
+      </View>
+
+      <AvoidKeyboard offset={20} />
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  scrollContainer: {
-    flexGrow: 1,
-  },
   container: {
     flex: 1,
     paddingHorizontal: 24,
-    paddingTop: Platform.OS === 'ios' ? 60 : 30,
-    paddingBottom: 40,
     justifyContent: 'space-between',
     alignItems: 'center',
-    minHeight: '100%',
+  },
+  topSection: {
+    width: '100%',
+    alignItems: 'center',
+    gap: 4,
   },
   header: {
     width: '100%',
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: 10,
+    height: 30,
     position: 'relative',
   },
   logoLabel: {
@@ -186,50 +193,60 @@ const styles = StyleSheet.create({
     position: 'absolute',
     left: 0,
     paddingVertical: 4,
-    paddingHorizontal: 8,
   },
   backText: {
     fontSize: 14,
     fontWeight: '600',
     textDecorationLine: 'underline',
   },
-  heroContainer: {
+  middleSection: {
     width: '100%',
     alignItems: 'center',
+    flexShrink: 1,
+  },
+  heroContainer: {
+    width: '100%',
+    height: 120,
+    maxHeight: 140,
+    alignItems: 'center',
     justifyContent: 'center',
-    marginVertical: 12,
+    marginVertical: 8,
+    flexShrink: 1,
   },
   heroImage: {
-    width: 320,
-    height: 180,
+    width: '100%',
+    height: '100%',
+    maxWidth: 280,
   },
   questionSection: {
     width: '100%',
     alignItems: 'center',
-    marginBottom: 20,
+    marginTop: 4,
+    marginBottom: 8,
   },
   title: {
-    fontSize: 26,
+    fontSize: 22,
     fontWeight: '800',
     letterSpacing: -0.5,
-    marginBottom: 6,
+    marginBottom: 4,
     textAlign: 'center',
   },
   subtitle: {
-    fontSize: 15,
+    fontSize: 14,
     textAlign: 'center',
     maxWidth: 320,
-    lineHeight: 22,
+    lineHeight: 18,
   },
   optionsContainer: {
     width: '100%',
-    gap: 12,
-    marginBottom: 24,
+    gap: 8,
     alignItems: 'center',
+    marginVertical: 8,
   },
   optionCard: {
-    width: 350,
-    paddingVertical: 16,
+    width: '100%',
+    maxWidth: 350,
+    paddingVertical: 12,
     paddingHorizontal: 16,
     borderRadius: 15,
     borderWidth: 1.5,
@@ -265,11 +282,13 @@ const styles = StyleSheet.create({
   footer: {
     width: '100%',
     alignItems: 'center',
+    marginTop: 8,
   },
   ctaButton: {
-    width: 350,
-    height: 55,
-    borderRadius: 30,
+    width: '100%',
+    maxWidth: 350,
+    height: 50,
+    borderRadius: 25,
     backgroundColor: '#000000',
     justifyContent: 'center',
     alignItems: 'center',
@@ -281,10 +300,10 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   progressContainer: {
-    width: 350,
+    width: '100%',
+    maxWidth: 350,
     alignItems: 'center',
-    marginVertical: 8,
-    gap: 8,
+    gap: 6,
   },
   progressBarBackground: {
     width: '100%',
@@ -298,7 +317,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#000000',
   },
   progressText: {
-    fontSize: 12,
+    fontSize: 11,
     fontWeight: '600',
     letterSpacing: 0.5,
     textTransform: 'uppercase',
