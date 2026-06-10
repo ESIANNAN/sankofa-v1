@@ -1,28 +1,26 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, ScrollView, Platform, TouchableOpacity } from 'react-native';
+import { StyleSheet, ScrollView, Platform, Image, TouchableOpacity } from 'react-native';
 import { router } from 'expo-router';
 import { Button } from '@/components/ui/button';
 import { Text } from '@/components/ui/text';
 import { View } from '@/components/ui/view';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { CheckCircle2, ChevronRight } from 'lucide-react-native';
-import { Icon } from '@/components/ui/icon';
 import { AvoidKeyboard } from '@/components/ui/avoid-keyboard';
 
-interface SummaryItem {
+interface SummaryOption {
   label: string;
   value: string;
   iconEmoji: string;
+  route: string;
 }
 
 export default function OnboardingSummaryScreen() {
-  const backgroundColor = '#FFFFFF';
+  const backgroundColor = '#FFFFFF'; // Clean white background as requested
   const textColor = '#000000';
   const mutedTextColor = '#71717a';
-  const accentColor = '#34C759'; // Success green
 
   const [loading, setLoading] = useState(false);
-  const [selections, setSelections] = useState<SummaryItem[]>([]);
+  const [selections, setSelections] = useState<SummaryOption[]>([]);
 
   useEffect(() => {
     const fetchSelections = async () => {
@@ -41,53 +39,78 @@ export default function OnboardingSummaryScreen() {
         };
 
         const purposeMap: Record<string, string> = {
-          travel: 'Travel (Communicate confidently)',
-          work: 'Work (Use language professionally)',
-          school: 'School (Support academic learning)',
-          friends_family: 'Friends & Family (Connect with loved ones)',
+          travel: 'Travel',
+          work: 'Work',
+          school: 'School',
+          friends_family: 'Friends & Family',
         };
 
         const goalMap: Record<string, string> = {
-          relaxed: '5 mins/day (Relaxed pace)',
-          steady: '10 mins/day (Steady progress)',
-          committed: '15 mins/day (Committed learner)',
-          dedicated: '20 mins/day (Dedicated learner)',
+          relaxed: '5 minutes/day',
+          steady: '10 minutes/day',
+          committed: '15 minutes/day',
+          dedicated: '20 minutes/day',
         };
 
         const levelMap: Record<string, string> = {
-          beginner: 'Beginner (Basic greetings)',
-          explorer: 'Explorer (Everyday situations)',
-          communicator: 'Communicator (Confident conversation)',
-          full_fluency: 'Full Fluency (Cultural expression)',
+          beginner: 'Beginner',
+          explorer: 'Explorer',
+          communicator: 'Communicator',
+          full_fluency: 'Full Fluency',
         };
 
         setSelections([
-          { label: 'Language', value: langMap[lang || ''] || 'Asante Twi', iconEmoji: '🇬🇭' },
-          { label: 'Goal Motivation', value: purposeMap[purpose || ''] || 'Travel', iconEmoji: '✈️' },
-          { label: 'Daily Goal', value: goalMap[goal || ''] || '10 minutes/day', iconEmoji: '🔥' },
-          { label: 'Current Level', value: levelMap[level || ''] || 'Beginner', iconEmoji: '🌱' },
+          {
+            label: 'Language',
+            value: langMap[lang || ''] || 'Asante Twi',
+            iconEmoji: '🇬🇭',
+            route: '/onboarding',
+          },
+          {
+            label: 'Goal',
+            value: purposeMap[purpose || ''] || 'Travel',
+            iconEmoji: '🎯',
+            route: '/onboarding/purpose',
+          },
+          {
+            label: 'Level',
+            value: levelMap[level || ''] || 'Beginner',
+            iconEmoji: '🌱',
+            route: '/onboarding/level-selection',
+          },
+          {
+            label: 'Daily Goal',
+            value: goalMap[goal || ''] || '10 minutes/day',
+            iconEmoji: '⏱️',
+            route: '/onboarding/daily-goal',
+          },
         ]);
       } catch (error) {
-        console.warn('Error loading summary choices:', error);
+        console.warn('Error loading preferences summary:', error);
       }
     };
 
     fetchSelections();
   }, []);
 
-  const handleStart = () => {
+  const handleStartLearning = async () => {
     setLoading(true);
-    setTimeout(() => {
-      setLoading(false);
+    try {
+      // Store user preferences completion state
+      await AsyncStorage.setItem('onboarding_completed', 'true');
+      
+      // Navigate to the main application Home screen
       router.replace('/(tabs)/(home)');
-    }, 1200);
+    } catch (error) {
+      console.warn('Error saving preferences completion:', error);
+      router.replace('/(tabs)/(home)');
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const handleEditStep = (stepIndex: number) => {
-    if (stepIndex === 0) router.push('/onboarding' as any);
-    if (stepIndex === 1) router.push('/onboarding/purpose' as any);
-    if (stepIndex === 2) router.push('/onboarding/daily-goal' as any);
-    if (stepIndex === 3) router.push('/onboarding/level-selection' as any);
+  const handleEditPreference = (routePath: string) => {
+    router.push(routePath as any);
   };
 
   return (
@@ -96,56 +119,62 @@ export default function OnboardingSummaryScreen() {
       showsVerticalScrollIndicator={false}
     >
       <View style={styles.container}>
-        {/* Top Header Row */}
+        {/* Top Header Section */}
         <View style={styles.header}>
-          <Text style={styles.logoLabel}>Ready to start</Text>
+          <Text style={styles.logoLabel}>{"You're All Set!"}</Text>
         </View>
 
-        {/* Center Success Icon Banner */}
-        <View style={styles.successBanner}>
-          <View style={[styles.iconContainer, { backgroundColor: accentColor + '15' }]}>
-            <Icon name={CheckCircle2} color={accentColor} size={50} />
-          </View>
+        {/* Hero Image */}
+        <View style={styles.heroContainer}>
+          <Image
+            source={require('@/assets/images/success-hero.png')}
+            style={styles.heroImage}
+            resizeMode="contain"
+          />
+        </View>
+
+        {/* Main Message & Subtitle */}
+        <View style={styles.messageSection}>
           <Text variant="heading" style={[styles.title, { color: textColor }]}>
-            All set!
-          </Text>
-          <Text variant="body" style={[styles.subtitle, { color: mutedTextColor }]}>
-            Your learning path is custom-tailored to your choices.
+            Your personalized learning journey is ready.
           </Text>
         </View>
 
-        {/* Selected Options Summary List */}
+        {/* Selected Preferences Summary Cards */}
         <View style={styles.summaryContainer}>
           {selections.map((item, index) => (
             <TouchableOpacity
               key={index}
-              onPress={() => handleEditStep(index)}
+              onPress={() => handleEditPreference(item.route)}
               style={styles.summaryCard}
               activeOpacity={0.7}
             >
               <View style={styles.cardLeft}>
                 <Text style={styles.cardIcon}>{item.iconEmoji}</Text>
-                <View style={{ flex: 1 }}>
-                  <Text style={[styles.cardLabel, { color: mutedTextColor }]}>{item.label}</Text>
-                  <Text style={[styles.cardValue, { color: textColor }]}>{item.value}</Text>
+                <View>
+                  <Text style={[styles.cardLabel, { color: mutedTextColor }]}>
+                    {item.label}
+                  </Text>
+                  <Text style={[styles.cardValue, { color: textColor }]}>
+                    {item.value}
+                  </Text>
                 </View>
               </View>
-              <Icon name={ChevronRight} color="#C7C7CC" size={20} />
             </TouchableOpacity>
           ))}
         </View>
 
-        {/* Footer Actions */}
+        {/* Footer Action Button */}
         <View style={styles.footer}>
           <Button
             variant="default"
             size="lg"
-            onPress={handleStart}
+            onPress={handleStartLearning}
             loading={loading}
             style={styles.ctaButton}
             textStyle={styles.ctaButtonText}
           >
-            Begin Learning
+            Start Learning
           </Button>
         </View>
 
@@ -171,7 +200,7 @@ const styles = StyleSheet.create({
   header: {
     width: '100%',
     alignItems: 'center',
-    marginBottom: 16,
+    marginBottom: 10,
   },
   logoLabel: {
     fontSize: 14,
@@ -180,35 +209,34 @@ const styles = StyleSheet.create({
     color: '#71717a',
     textTransform: 'uppercase',
   },
-  successBanner: {
+  heroContainer: {
+    width: '100%',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginVertical: 12,
+  },
+  heroImage: {
+    width: 320,
+    height: 180,
+  },
+  messageSection: {
+    width: '100%',
     alignItems: 'center',
     marginBottom: 20,
   },
-  iconContainer: {
-    width: 90,
-    height: 90,
-    borderRadius: 45,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginBottom: 16,
-  },
   title: {
-    fontSize: 28,
+    fontSize: 24,
     fontWeight: '800',
     letterSpacing: -0.5,
     marginBottom: 6,
     textAlign: 'center',
-  },
-  subtitle: {
-    fontSize: 15,
-    textAlign: 'center',
     maxWidth: 320,
-    lineHeight: 22,
+    lineHeight: 30,
   },
   summaryContainer: {
     width: '100%',
     gap: 12,
-    marginBottom: 32,
+    marginBottom: 24,
     alignItems: 'center',
   },
   summaryCard: {
@@ -220,7 +248,6 @@ const styles = StyleSheet.create({
     borderColor: '#E4E4E7',
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
     backgroundColor: '#FFFFFF',
   },
   cardLeft: {
