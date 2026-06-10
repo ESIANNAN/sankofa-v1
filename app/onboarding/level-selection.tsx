@@ -69,6 +69,14 @@ export default function LevelSelectionScreen() {
           </TouchableOpacity>
         </View>
 
+        {/* Progress Indicator */}
+        <View style={styles.progressContainer}>
+          <View style={styles.progressBarBackground}>
+            <View style={[styles.progressBarFill, { width: '80%' }]} />
+          </View>
+          <Text style={[styles.progressText, { color: mutedTextColor }]}>Step 4 of 5</Text>
+        </View>
+
         {/* Hero Image */}
         <View style={styles.heroContainer}>
           <Image
@@ -130,7 +138,7 @@ export default function LevelSelectionScreen() {
             loading={loading}
             style={[
               styles.ctaButton,
-              !selectedLevel && { opacity: 0.5 },
+              !selectedLevel ? { opacity: 0.5 } : undefined,
             ]}
             textStyle={styles.ctaButtonText}
             disabled={!selectedLevel || loading}
@@ -270,5 +278,28 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     fontSize: 16,
     textAlign: 'center',
+  },
+  progressContainer: {
+    width: 350,
+    alignItems: 'center',
+    marginVertical: 8,
+    gap: 8,
+  },
+  progressBarBackground: {
+    width: '100%',
+    height: 6,
+    borderRadius: 3,
+    backgroundColor: '#E4E4E7',
+    overflow: 'hidden',
+  },
+  progressBarFill: {
+    height: '100%',
+    backgroundColor: '#000000',
+  },
+  progressText: {
+    fontSize: 12,
+    fontWeight: '600',
+    letterSpacing: 0.5,
+    textTransform: 'uppercase',
   },
 });

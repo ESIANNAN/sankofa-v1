@@ -33,7 +33,7 @@ export default function VerifyCodeScreen() {
 
   // Timer countdown implementation for resend code cooldown
   useEffect(() => {
-    let interval: NodeJS.Timeout;
+    let interval: ReturnType<typeof setInterval> | undefined;
     if (timer > 0) {
       interval = setInterval(() => {
         setTimer((prev) => prev - 1);
