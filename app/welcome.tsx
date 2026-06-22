@@ -34,7 +34,7 @@ export default function WelcomeScreen() {
             Akwaaba,
           </Text>
           <Text variant="subtitle" style={[styles.welcomeText, { color: textColor }]}>
-            Welcome to Sankofa
+            Sankofa
           </Text>
           <Text variant="body" style={[styles.description, { color: mutedTextColor }]}>
             Rediscover Ghanaian languages and culture through learning.
@@ -94,7 +94,7 @@ const styles = StyleSheet.create({
     textAlign: 'left',
   },
   welcomeText: {
-    fontSize: 22,
+    fontSize: 28,
     fontWeight: '600',
     textAlign: 'left',
     marginBottom: 4,

@@ -92,7 +92,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   continueButton: {
-    width: '100%',
+    width: '160%',
     height: 56,
+    alignItems: 'center',
   },
 });
