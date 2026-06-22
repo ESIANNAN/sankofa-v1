@@ -7,6 +7,7 @@ import { Card } from '@/components/ui/card';
 import { Icon } from '@/components/ui/icon';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { auth } from '@/services/firebase';
 import {
   Flame,
   Star,
@@ -28,13 +29,26 @@ export default function HomeScreen() {
   const [selectedLanguage, setSelectedLanguage] = useState('Asante Twi');
 
   useEffect(() => {
-    const loadUserData = async () => {
-      try {
-        const storedName = await AsyncStorage.getItem('user_name');
-        if (storedName) {
-          setUserName(storedName);
+    // Listen to Firebase Auth state change to grab displayName
+    const unsubscribe = auth.onAuthStateChanged(async (user: any) => {
+      if (user && user.displayName) {
+        setUserName(user.displayName);
+      } else {
+        try {
+          const storedName = await AsyncStorage.getItem('user_name');
+          if (storedName) {
+            setUserName(storedName);
+          } else {
+            setUserName('Kwame');
+          }
+        } catch (e) {
+          console.warn('Error loading user_name from AsyncStorage:', e);
         }
+      }
+    });
 
+    const loadSettings = async () => {
+      try {
         const lang = await AsyncStorage.getItem('user_selected_language');
         const langMap: Record<string, string> = {
           asante_twi: 'Asante Twi',
@@ -46,10 +60,13 @@ export default function HomeScreen() {
           setSelectedLanguage(langMap[lang]);
         }
       } catch (error) {
-        console.warn('Error loading user data on Home Screen:', error);
+        console.warn('Error loading language setting on Home Screen:', error);
       }
     };
-    loadUserData();
+
+    loadSettings();
+
+    return unsubscribe;
   }, []);
 
   const handleLessonClick = (lessonId: string) => {
@@ -69,34 +86,14 @@ export default function HomeScreen() {
       {/* Header Section */}
       <View style={styles.header}>
         <View>
-          <Text style={[styles.greetingLabel, { color: mutedTextColor }]}>Good Morning</Text>
-          <Text style={[styles.userName, { color: textColor }]}>{userName}</Text>
+          <Text style={[styles.greetingLabel, { color: mutedTextColor }]}>GOOD MORNING</Text>
+          <Text style={[styles.userName, { color: textColor }]}>
+            {userName} 👋🏾
+          </Text>
         </View>
         <View style={styles.avatarCircle}>
           <Text style={styles.avatarEmoji}>👤</Text>
         </View>
-      </View>
-
-      {/* Quick Stats Section */}
-      <View style={styles.statsRow}>
-        <Card style={styles.statCard}>
-          <View style={styles.statContent}>
-            <Icon name={Flame} color="#FF9500" size={24} />
-            <View>
-              <Text style={styles.statLabel}>Daily Streak</Text>
-              <Text style={styles.statValue}>3 Days</Text>
-            </View>
-          </View>
-        </Card>
-        <Card style={styles.statCard}>
-          <View style={styles.statContent}>
-            <Icon name={Star} color="#FFCC00" size={24} />
-            <View>
-              <Text style={styles.statLabel}>XP Points</Text>
-              <Text style={styles.statValue}>120 XP</Text>
-            </View>
-          </View>
-        </Card>
       </View>
 
       {/* Word of the Day Card */}
@@ -111,17 +108,20 @@ export default function HomeScreen() {
         <Text style={[styles.wordDescription, { color: mutedTextColor }]}>{"\"Go back and get it\""}</Text>
       </Card>
 
-      {/* Progress Summary Cards */}
+      {/* Quick Stats Cards */}
       <View style={styles.progressRow}>
         <Card style={styles.progressCard}>
+          <Icon name={Flame} color="#FF9500" size={24} />
           <Text style={[styles.progressNumber, { color: textColor }]}>3</Text>
           <Text style={[styles.progressLabel, { color: mutedTextColor }]}>STREAK</Text>
         </Card>
         <Card style={styles.progressCard}>
+          <Icon name={Star} color="#FFCC00" size={24} />
           <Text style={[styles.progressNumber, { color: textColor }]}>120</Text>
           <Text style={[styles.progressLabel, { color: mutedTextColor }]}>XP</Text>
         </Card>
         <Card style={styles.progressCard}>
+          <Text style={styles.emojiIcon}>📚</Text>
           <Text style={[styles.progressNumber, { color: textColor }]}>2</Text>
           <Text style={[styles.progressLabel, { color: mutedTextColor }]}>LESSONS</Text>
         </Card>
@@ -147,7 +147,7 @@ export default function HomeScreen() {
                 </View>
                 <View style={styles.lessonTextContainer}>
                   <Text style={styles.lessonTitle}>Family</Text>
-                  <Text style={[styles.lessonProgress, { color: mutedTextColor }]}>4 / 10 Words</Text>
+                  <Text style={[styles.lessonProgress, { color: mutedTextColor }]}>0 / 10 Words</Text>
                 </View>
                 <Icon name={ChevronRight} color={mutedTextColor} size={20} />
               </View>
@@ -227,18 +227,20 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 20,
+    marginBottom: 24,
   },
   greetingLabel: {
-    fontSize: 14,
-    fontWeight: '600',
+    fontSize: 13,
+    fontWeight: '700',
     textTransform: 'uppercase',
-    letterSpacing: 0.5,
+    letterSpacing: 1.2,
+    marginBottom: 4,
   },
   userName: {
-    fontSize: 28,
+    fontSize: 32,
     fontWeight: '800',
     marginTop: 2,
+    letterSpacing: -0.5,
   },
   avatarCircle: {
     width: 44,
@@ -251,95 +253,88 @@ const styles = StyleSheet.create({
   avatarEmoji: {
     fontSize: 20,
   },
-  statsRow: {
-    flexDirection: 'row',
-    gap: 12,
-    marginBottom: 16,
-  },
-  statCard: {
-    flex: 1,
-    padding: 12,
-    backgroundColor: '#FFFFFF',
-    borderWidth: 1,
-    borderColor: '#E4E4E7',
-    borderRadius: 15,
-  },
-  statContent: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 10,
-  },
-  statLabel: {
-    fontSize: 11,
-    color: '#71717a',
-    fontWeight: '500',
-  },
-  statValue: {
-    fontSize: 14,
-    fontWeight: '700',
-    marginTop: 1,
-  },
   wordOfTheDayCard: {
     padding: 20,
-    backgroundColor: '#FAF9F6',
+    backgroundColor: '#FFFFFF',
     borderWidth: 1,
-    borderColor: '#E4E4E7',
-    borderRadius: 16,
-    marginBottom: 16,
+    borderColor: '#E5E5E5',
+    borderRadius: 18,
+    marginBottom: 20,
+    shadowColor: '#000000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.05,
+    shadowRadius: 8,
+    elevation: 2,
   },
   wordHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 8,
+    marginBottom: 12,
   },
   wordCardTitle: {
-    fontSize: 11,
+    fontSize: 12,
     fontWeight: '700',
-    letterSpacing: 1,
+    letterSpacing: 1.5,
+    textTransform: 'uppercase',
   },
   audioButton: {
-    width: 32,
-    height: 32,
-    borderRadius: 16,
-    backgroundColor: '#FFFFFF',
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: '#F4F4F5',
     justifyContent: 'center',
     alignItems: 'center',
     borderWidth: 1,
-    borderColor: '#E4E4E7',
+    borderColor: '#E5E5E5',
   },
   wordText: {
-    fontSize: 32,
+    fontSize: 34,
     fontWeight: '800',
-    marginBottom: 4,
+    marginBottom: 6,
+    letterSpacing: -0.5,
   },
   wordDescription: {
-    fontSize: 15,
+    fontSize: 16,
     fontStyle: 'italic',
   },
   progressRow: {
     flexDirection: 'row',
-    gap: 8,
-    marginBottom: 24,
+    gap: 12,
+    marginBottom: 28,
+    justifyContent: 'space-between',
   },
   progressCard: {
     flex: 1,
-    paddingVertical: 14,
+    aspectRatio: 1,
+    padding: 12,
     alignItems: 'center',
+    justifyContent: 'center',
     backgroundColor: '#FFFFFF',
     borderWidth: 1,
-    borderColor: '#E4E4E7',
-    borderRadius: 12,
+    borderColor: '#E5E5E5',
+    borderRadius: 18,
+    shadowColor: '#000000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.05,
+    shadowRadius: 8,
+    elevation: 2,
   },
   progressNumber: {
-    fontSize: 22,
+    fontSize: 20,
     fontWeight: '800',
+    marginTop: 6,
+    marginBottom: 2,
   },
   progressLabel: {
-    fontSize: 9,
-    fontWeight: '600',
-    letterSpacing: 0.5,
-    marginTop: 2,
+    fontSize: 10,
+    fontWeight: '700',
+    letterSpacing: 0.8,
+    textTransform: 'uppercase',
+  },
+  emojiIcon: {
+    fontSize: 22,
+    lineHeight: 26,
   },
   roadmapSection: {
     width: '100%',
