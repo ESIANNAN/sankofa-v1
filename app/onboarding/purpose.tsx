@@ -43,7 +43,7 @@ export default function PurposeSelectionScreen() {
     try {
       // Save selected purpose in AsyncStorage
       await AsyncStorage.setItem('user_learning_purpose', selectedPurpose);
-      
+
       // Navigate to the Daily Goal Screen
       router.push('/onboarding/daily-goal' as any);
     } catch (error) {
@@ -148,10 +148,11 @@ export default function PurposeSelectionScreen() {
           onPress={handleContinue}
           loading={loading}
           style={styles.ctaButton}
-          textStyle={styles.ctaButtonText}
           disabled={!selectedPurpose || loading}
         >
-          Continue
+          <Text style={styles.ctaButtonText}>
+            Continue
+          </Text>
         </Button>
       </View>
 
@@ -280,15 +281,22 @@ const styles = StyleSheet.create({
   footer: {
     width: '100%',
     alignItems: 'center',
-    marginTop: 8,
+    paddingBottom: 8,
   },
+
   ctaButton: {
     width: '100%',
+    maxWidth: 350,
     height: 55,
+    borderRadius: 28,
+    backgroundColor: '#000000',
     justifyContent: 'center',
     alignItems: 'center',
   },
+
   ctaButtonText: {
+    width: '100%',
+    color: '#FFFFFF',
     fontWeight: '600',
     fontSize: 16,
     textAlign: 'center',

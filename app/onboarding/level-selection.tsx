@@ -43,7 +43,7 @@ export default function LevelSelectionScreen() {
     try {
       // Save selected experience level in AsyncStorage
       await AsyncStorage.setItem('user_experience_level', selectedLevel);
-      
+
       // Navigate to the Onboarding Summary Screen
       router.push('/onboarding/summary' as any);
     } catch (error) {
@@ -144,10 +144,11 @@ export default function LevelSelectionScreen() {
           onPress={handleContinue}
           loading={loading}
           style={styles.ctaButton}
-          textStyle={styles.ctaButtonText}
           disabled={!selectedLevel || loading}
         >
-          Continue
+          <Text style={styles.ctaButtonText}>
+            Continue
+          </Text>
         </Button>
       </View>
 
@@ -275,15 +276,22 @@ const styles = StyleSheet.create({
   footer: {
     width: '100%',
     alignItems: 'center',
-    marginTop: 8,
+    paddingBottom: 8,
   },
+
   ctaButton: {
     width: '100%',
+    maxWidth: 350,
     height: 55,
+    borderRadius: 28,
+    backgroundColor: '#000000',
     justifyContent: 'center',
     alignItems: 'center',
   },
+
   ctaButtonText: {
+    width: '100%',
+    color: '#FFFFFF',
     fontWeight: '600',
     fontSize: 16,
     textAlign: 'center',

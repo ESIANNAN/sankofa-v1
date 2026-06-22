@@ -44,7 +44,17 @@ export default function ConfirmationScreen() {
           onPress={handleContinue}
           style={styles.continueButton}
         >
-          Continue
+          <Text
+            style={{
+              width: '100%',
+              textAlign: 'center',
+              color: '#FFFFFF',
+              fontSize: 16,
+              fontWeight: '600',
+            }}
+          >
+            Continue
+          </Text>
         </Button>
       </View>
     </View>
@@ -92,8 +102,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   continueButton: {
-    width: '160%',
+    width: '100%',
     height: 56,
+    justifyContent: 'center',
     alignItems: 'center',
   },
 });

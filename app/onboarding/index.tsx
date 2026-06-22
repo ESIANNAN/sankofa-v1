@@ -47,7 +47,7 @@ export default function LanguageSelectionScreen() {
     try {
       // Save selected language locally in AsyncStorage
       await AsyncStorage.setItem('user_selected_language', selectedLanguage);
-      
+
       // Navigate to the Purpose Selection Screen
       router.push('/onboarding/purpose' as any);
     } catch (error) {
@@ -144,10 +144,11 @@ export default function LanguageSelectionScreen() {
           onPress={handleContinue}
           loading={loading}
           style={styles.ctaButton}
-          textStyle={styles.ctaButtonText}
           disabled={!selectedLanguage || loading}
         >
-          Continue
+          <Text style={styles.ctaButtonText}>
+            Continue
+          </Text>
         </Button>
       </View>
 
@@ -275,17 +276,24 @@ const styles = StyleSheet.create({
   footer: {
     width: '100%',
     alignItems: 'center',
-    marginTop: 8,
+    paddingBottom: 8,
   },
+
   ctaButton: {
     width: '100%',
+    maxWidth: 350,
     height: 55,
+    borderRadius: 28,
+    backgroundColor: '#000000',
     justifyContent: 'center',
     alignItems: 'center',
   },
+
   ctaButtonText: {
-    fontWeight: '600',
+    width: '100%',
+    color: '#FFFFFF',
     fontSize: 16,
+    fontWeight: '600',
     textAlign: 'center',
   },
   progressContainer: {
