@@ -24,8 +24,9 @@ export default function ProfileScreen() {
   const textColor = '#000000';
   const mutedTextColor = '#71717a';
 
-  const [userName, setUserName] = useState('Philomina Annan');
+  const [userName, setUserName] = useState('');
   const [userPhoto, setUserPhoto] = useState<string | null>(null);
+  const [userEmail, setUserEmail] = useState('');
   const [selectedLanguage, setSelectedLanguage] = useState('Asante Twi');
   const [experienceLevel, setExperienceLevel] = useState('Beginner - Level 1');
   const [shareModalVisible, setShareModalVisible] = useState(false);
@@ -50,11 +51,19 @@ export default function ProfileScreen() {
   };
 
   useEffect(() => {
-    // Listen to Firebase Auth state change to grab displayName and photoURL
+    // Initial fetch from current user
+    if (auth.currentUser) {
+      setUserName(auth.currentUser.displayName || '');
+      setUserPhoto(auth.currentUser.photoURL || null);
+      setUserEmail(auth.currentUser.email || '');
+    }
+
+    // Listen to Firebase Auth state change to grab displayName, photoURL and email
     const unsubscribe = auth.onAuthStateChanged(async (user: any) => {
       if (user) {
         if (user.displayName) setUserName(user.displayName);
         if (user.photoURL) setUserPhoto(user.photoURL);
+        if (user.email) setUserEmail(user.email);
       } else {
         try {
           const storedName = await AsyncStorage.getItem('user_name');
@@ -62,6 +71,9 @@ export default function ProfileScreen() {
 
           const storedPhoto = await AsyncStorage.getItem('user_photo');
           if (storedPhoto) setUserPhoto(storedPhoto);
+
+          const storedEmail = await AsyncStorage.getItem('user_email');
+          if (storedEmail) setUserEmail(storedEmail);
         } catch (e) {
           console.warn('Error loading user profile data from AsyncStorage:', e);
         }
@@ -163,6 +175,11 @@ export default function ProfileScreen() {
           </View>
         )}
         <Text style={[styles.profileName, { color: textColor }]}>{userName}</Text>
+        {userEmail ? (
+          <Text style={{ fontSize: 14, color: mutedTextColor, marginBottom: 8, fontWeight: '500' }}>
+            {userEmail}
+          </Text>
+        ) : null}
         <Text style={[styles.profileLanguage, { color: mutedTextColor }]}>
           Learning {selectedLanguage}
         </Text>

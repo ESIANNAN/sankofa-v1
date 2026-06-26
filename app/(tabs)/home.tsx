@@ -25,10 +25,19 @@ export default function HomeScreen() {
   const textColor = '#000000';
   const mutedTextColor = '#71717a';
 
-  const [userName, setUserName] = useState('Kwame');
+  const [userName, setUserName] = useState('');
   const [selectedLanguage, setSelectedLanguage] = useState('Asante Twi');
 
   useEffect(() => {
+    // Initialize displayName on mount if user is logged in
+    if (auth.currentUser && auth.currentUser.displayName) {
+      setUserName(auth.currentUser.displayName);
+    } else {
+      AsyncStorage.getItem('user_name').then((stored) => {
+        if (stored) setUserName(stored);
+      }).catch(() => {});
+    }
+
     // Listen to Firebase Auth state change to grab displayName
     const unsubscribe = auth.onAuthStateChanged(async (user: any) => {
       if (user && user.displayName) {
@@ -38,8 +47,6 @@ export default function HomeScreen() {
           const storedName = await AsyncStorage.getItem('user_name');
           if (storedName) {
             setUserName(storedName);
-          } else {
-            setUserName('Kwame');
           }
         } catch (e) {
           console.warn('Error loading user_name from AsyncStorage:', e);

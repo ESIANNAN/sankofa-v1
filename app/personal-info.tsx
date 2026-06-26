@@ -25,10 +25,10 @@ export default function PersonalInfoScreen() {
   const textColor = '#000000';
   const mutedTextColor = '#71717a';
 
-  const [fullName, setFullName] = useState('Philomina Annan');
+  const [fullName, setFullName] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
-  const [email, setEmail] = useState('annanesi875@gmail.com');
-  const [dob, setDob] = useState('18-04-2004');
+  const [email, setEmail] = useState('');
+  const [dob, setDob] = useState('');
   const [photoUri, setPhotoUri] = useState<string | null>(null);
 
   // Errors state
@@ -40,6 +40,7 @@ export default function PersonalInfoScreen() {
   const [saveSuccessMessage, setSaveSuccessMessage] = useState('');
   const [avatarModalVisible, setAvatarModalVisible] = useState(false);
   const [customPhotoUrl, setCustomPhotoUrl] = useState('');
+  const [saving, setSaving] = useState(false);
 
   const [pickerDay, setPickerDay] = useState(18);
   const [pickerMonth, setPickerMonth] = useState(3); // April
@@ -69,21 +70,32 @@ export default function PersonalInfoScreen() {
 
   useEffect(() => {
     const loadProfileData = async () => {
-      try {
-        const storedName = await AsyncStorage.getItem('user_name');
-        if (storedName) setFullName(storedName);
+      // 1. Initial load from Firebase if available
+      if (auth.currentUser) {
+        setFullName(auth.currentUser.displayName || '');
+        setEmail(auth.currentUser.email || '');
+        setPhotoUri(auth.currentUser.photoURL || null);
+      }
 
+      // 2. Load other details from AsyncStorage
+      try {
         const storedPhone = await AsyncStorage.getItem('user_phone');
         if (storedPhone) setPhoneNumber(storedPhone);
-
-        const storedEmail = await AsyncStorage.getItem('user_email');
-        if (storedEmail) setEmail(storedEmail);
 
         const storedDob = await AsyncStorage.getItem('user_dob');
         if (storedDob) setDob(storedDob);
 
-        const storedPhoto = await AsyncStorage.getItem('user_photo');
-        if (storedPhoto) setPhotoUri(storedPhoto);
+        // Fallbacks for profile details if Firebase auth data is empty or unauthenticated
+        if (!auth.currentUser) {
+          const storedName = await AsyncStorage.getItem('user_name');
+          if (storedName) setFullName(storedName);
+
+          const storedEmail = await AsyncStorage.getItem('user_email');
+          if (storedEmail) setEmail(storedEmail);
+
+          const storedPhoto = await AsyncStorage.getItem('user_photo');
+          if (storedPhoto) setPhotoUri(storedPhoto);
+        }
       } catch (error) {
         console.warn('Error loading profile data:', error);
       }
@@ -128,24 +140,49 @@ export default function PersonalInfoScreen() {
 
     if (!isValid) return;
 
+    setSaving(true);
     try {
-      await AsyncStorage.setItem('user_name', fullName);
-      await AsyncStorage.setItem('user_phone', phoneNumber);
-      await AsyncStorage.setItem('user_email', email);
-      await AsyncStorage.setItem('user_dob', dob);
+      if (auth.currentUser) {
+        const { updateProfile } = await import('firebase/auth');
+
+        // 1. Update Firebase profile displayName and photoURL
+        await updateProfile(auth.currentUser, {
+          displayName: fullName.trim(),
+          photoURL: photoUri,
+        });
+
+        // 2. Update Firebase email if it changed
+        if (email.trim() !== auth.currentUser.email) {
+          const { updateEmail } = await import('firebase/auth');
+          try {
+            await updateEmail(auth.currentUser, email.trim());
+          } catch (emailErr: any) {
+            console.warn('Firebase Email Update Error:', emailErr);
+            if (emailErr.code === 'auth/requires-recent-login') {
+              Alert.alert(
+                'Reauthentication Required',
+                'For security reasons, changing your email requires a recent login. Please log out, log back in, and try again.'
+              );
+              // Revert input email back to active email
+              setEmail(auth.currentUser.email || '');
+              setSaving(false);
+              return;
+            } else {
+              throw emailErr;
+            }
+          }
+        }
+      }
+
+      // 3. Save locally in AsyncStorage
+      await AsyncStorage.setItem('user_name', fullName.trim());
+      await AsyncStorage.setItem('user_phone', phoneNumber.trim());
+      await AsyncStorage.setItem('user_email', email.trim());
+      await AsyncStorage.setItem('user_dob', dob.trim());
       if (photoUri) {
         await AsyncStorage.setItem('user_photo', photoUri);
       } else {
         await AsyncStorage.removeItem('user_photo');
-      }
-
-      // Update Firebase Profile if signed in
-      if (auth.currentUser) {
-        const { updateProfile } = await import('firebase/auth');
-        await updateProfile(auth.currentUser, {
-          displayName: fullName,
-          photoURL: photoUri,
-        });
       }
 
       setSaveSuccessMessage('Profile updated successfully');
@@ -153,9 +190,11 @@ export default function PersonalInfoScreen() {
       setTimeout(() => {
         setSaveSuccessMessage('');
       }, 3000);
-    } catch (error) {
+    } catch (error: any) {
       console.warn('Error saving profile changes:', error);
-      Alert.alert('Error', 'Failed to save changes. Please try again.');
+      Alert.alert('Error', error.message || 'Failed to save changes. Please try again.');
+    } finally {
+      setSaving(false);
     }
   };
 
@@ -320,11 +359,14 @@ export default function PersonalInfoScreen() {
 
         {/* Save Changes Button */}
         <TouchableOpacity
-          style={styles.saveButton}
+          style={[styles.saveButton, saving && { opacity: 0.6 }]}
           onPress={handleSave}
           activeOpacity={0.8}
+          disabled={saving}
         >
-          <Text style={styles.saveButtonText}>Save Changes</Text>
+          <Text style={styles.saveButtonText}>
+            {saving ? 'Saving...' : 'Save Changes'}
+          </Text>
         </TouchableOpacity>
 
       </ScrollView>

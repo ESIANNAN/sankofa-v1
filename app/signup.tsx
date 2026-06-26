@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { StyleSheet, ScrollView, Platform, TouchableOpacity } from 'react-native';
+import { StyleSheet, ScrollView, Platform, TouchableOpacity, Alert } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { router } from 'expo-router';
 import { Button } from '@/components/ui/button';
@@ -9,6 +9,8 @@ import { View } from '@/components/ui/view';
 import { useColor } from '@/hooks/useColor';
 import { Mail, Lock, User, Eye, EyeOff, ChevronLeft } from 'lucide-react-native';
 import { Icon } from '@/components/ui/icon';
+import { auth } from '@/services/firebase';
+import { createUserWithEmailAndPassword, updateProfile, sendEmailVerification } from 'firebase/auth';
 
 export default function SignupScreen() {
   const backgroundColor = useColor('background');
@@ -64,16 +66,44 @@ export default function SignupScreen() {
     if (!isValid) return;
 
     setLoading(true);
-    // Simulate signup API call, save user name, and navigate to Confirmation Screen
     try {
-      await AsyncStorage.setItem('user_name', fullName.trim());
-    } catch (e) {
-      console.warn('Error saving user name:', e);
-    }
-    setTimeout(() => {
-      setLoading(false);
+      // 1. Create account
+      const userCredential = await createUserWithEmailAndPassword(auth, email.trim(), password);
+
+      // 2. Update display name
+      if (userCredential.user) {
+        await updateProfile(userCredential.user, {
+          displayName: fullName.trim(),
+        });
+      }
+
+      // 3. Send email verification
+      await sendEmailVerification(userCredential.user);
+
+      // 4. Save name locally
+      try {
+        await AsyncStorage.setItem('user_name', fullName.trim());
+        await AsyncStorage.setItem('user_email', email.trim());
+      } catch (e) {
+        console.warn('Error saving user name:', e);
+      }
+
+      // 5. Navigate to Verification Screen
       router.replace('/confirmation' as any);
-    }, 1200);
+    } catch (error: any) {
+      console.warn('Firebase Registration Error:', error);
+      if (error.code === 'auth/email-already-in-use') {
+        setEmailError('This email is already in use');
+      } else if (error.code === 'auth/invalid-email') {
+        setEmailError('Please enter a valid email address');
+      } else if (error.code === 'auth/weak-password') {
+        setPasswordError('Password is too weak');
+      } else {
+        Alert.alert('Registration Failed', error.message || 'An unexpected error occurred.');
+      }
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleBack = () => {

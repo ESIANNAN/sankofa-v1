@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { StyleSheet, ScrollView, Platform, TouchableOpacity } from 'react-native';
+import { StyleSheet, ScrollView, Platform, TouchableOpacity, Alert } from 'react-native';
 import { router } from 'expo-router';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -9,6 +9,9 @@ import { Mail, Lock, Eye, EyeOff, ChevronLeft } from 'lucide-react-native';
 import { Icon } from '@/components/ui/icon';
 import { AvoidKeyboard } from '@/components/ui/avoid-keyboard';
 import Svg, { Path } from 'react-native-svg';
+import { auth } from '@/services/firebase';
+import { signInWithEmailAndPassword } from 'firebase/auth';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 // Custom SVG Google Icon for premium brand representation
 const GoogleIcon = () => (
@@ -60,7 +63,7 @@ export default function LoginScreen() {
     return emailRegex.test(emailStr);
   };
 
-  const handleLogin = () => {
+  const handleLogin = async () => {
     setEmailError('');
     setPasswordError('');
 
@@ -82,11 +85,43 @@ export default function LoginScreen() {
     if (!isValid) return;
 
     setLoading(true);
-    // Simulate login and redirect to home tabs
-    setTimeout(() => {
+    try {
+      const userCredential = await signInWithEmailAndPassword(auth, email.trim(), password);
+      const user = userCredential.user;
+
+      if (user.emailVerified) {
+        // Fetch onboarding completed status
+        const onboardingCompleted = await AsyncStorage.getItem('onboarding_completed');
+        if (onboardingCompleted === 'true') {
+          router.replace('/home' as any);
+        } else {
+          router.replace('/onboarding' as any);
+        }
+      } else {
+        // Redirect back to the Verification Screen
+        router.replace('/confirmation' as any);
+        Alert.alert(
+          'Email Verification Required',
+          'Please verify your email address before accessing the application.'
+        );
+      }
+    } catch (error: any) {
+      console.warn('Firebase Login Error:', error);
+      if (
+        error.code === 'auth/invalid-credential' ||
+        error.code === 'auth/wrong-password' ||
+        error.code === 'auth/user-not-found'
+      ) {
+        setEmailError('Invalid email or password');
+        setPasswordError('Invalid email or password');
+      } else if (error.code === 'auth/invalid-email') {
+        setEmailError('Please enter a valid email address');
+      } else {
+        Alert.alert('Login Failed', error.message || 'An unexpected error occurred.');
+      }
+    } finally {
       setLoading(false);
-      router.replace('/home' as any);
-    }, 1200);
+    }
   };
 
   const handleBack = () => {
@@ -98,21 +133,11 @@ export default function LoginScreen() {
   };
 
   const handleGoogleSignIn = () => {
-    setGoogleLoading(true);
-    console.log('Google Auth Triggered');
-    setTimeout(() => {
-      setGoogleLoading(false);
-      router.replace('/home' as any);
-    }, 1200);
+    Alert.alert('Feature Unavailable', 'Google Sign-In is not configured yet.');
   };
 
   const handleAppleSignIn = () => {
-    setAppleLoading(true);
-    console.log('Apple Auth Triggered');
-    setTimeout(() => {
-      setAppleLoading(false);
-      router.replace('/home' as any);
-    }, 1200);
+    Alert.alert('Feature Unavailable', 'Apple Sign-In is not configured yet.');
   };
 
   return (

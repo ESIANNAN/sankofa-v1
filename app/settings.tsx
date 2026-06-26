@@ -85,11 +85,23 @@ export default function SettingsScreen() {
 
   const handleLogout = async () => {
     try {
-      // Clear AsyncStorage
-      await AsyncStorage.clear();
+      // Sign out Firebase Authentication using signOut(auth)
+      const { signOut } = await import('firebase/auth');
+      await signOut(auth);
 
-      // Sign out Firebase Authentication
-      await auth.signOut();
+      // Clear selective user session and preferences cache from AsyncStorage, but keep onboarding_completed
+      const keysToRemove = [
+        'user_name',
+        'user_email',
+        'user_photo',
+        'user_phone',
+        'user_dob',
+        'user_selected_language',
+        'user_learning_purpose',
+        'user_daily_goal',
+        'user_experience_level'
+      ];
+      await Promise.all(keysToRemove.map(key => AsyncStorage.removeItem(key)));
 
       // Navigate to Login Screen
       router.replace('/login' as any);

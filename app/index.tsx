@@ -10,6 +10,9 @@ import Animated, {
 import { View } from '@/components/ui/view';
 import { Text } from '@/components/ui/text';
 import { useColor } from '@/hooks/useColor';
+import { auth } from '@/services/firebase';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
 export default function SplashScreen() {
   const backgroundColor = useColor('background');
   const textColor = useColor('text');
@@ -24,11 +27,42 @@ export default function SplashScreen() {
     scale.value = withTiming(1, { duration: 1200 });
     // Text elements fade-in slightly after the logo
     textOpacity.value = withDelay(400, withTiming(1, { duration: 800 }));
-    // Automatically navigate to the Welcome Screen after 6 seconds
-    const timer = setTimeout(() => {
-      router.replace('/welcome');
-    }, 6000);
-    return () => clearTimeout(timer);
+
+    // Listen for Firebase authentication state
+    const unsubscribe = auth.onAuthStateChanged(async (user) => {
+      // Unsubscribe immediately so this only runs on initial load
+      unsubscribe();
+
+      try {
+        if (!user) {
+          router.replace('/welcome' as any);
+        } else {
+          // Reload the user to get the latest emailVerified status
+          try {
+            await user.reload();
+          } catch (reloadErr) {
+            console.warn('Failed to reload user on startup:', reloadErr);
+          }
+
+          const currentUser = auth.currentUser;
+          if (currentUser && currentUser.emailVerified) {
+            const onboardingCompleted = await AsyncStorage.getItem('onboarding_completed');
+            if (onboardingCompleted === 'true') {
+              router.replace('/home' as any);
+            } else {
+              router.replace('/onboarding' as any);
+            }
+          } else {
+            router.replace('/confirmation' as any);
+          }
+        }
+      } catch (err) {
+        console.error('Error during startup routing:', err);
+        router.replace('/welcome' as any);
+      }
+    });
+
+    return () => unsubscribe();
   }, []);
   const logoAnimatedStyle = useAnimatedStyle(() => {
     return {

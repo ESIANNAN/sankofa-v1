@@ -1,5 +1,5 @@
-import React from 'react';
-import { StyleSheet, Platform } from 'react-native';
+import React, { useState } from 'react';
+import { StyleSheet, Platform, Alert } from 'react-native';
 import { router } from 'expo-router';
 import { Button } from '@/components/ui/button';
 import { Text } from '@/components/ui/text';
@@ -7,6 +7,8 @@ import { View } from '@/components/ui/view';
 import { useColor } from '@/hooks/useColor';
 import { CheckCircle2 } from 'lucide-react-native';
 import { Icon } from '@/components/ui/icon';
+import { auth } from '@/services/firebase';
+import { sendEmailVerification } from 'firebase/auth';
 
 export default function ConfirmationScreen() {
   const backgroundColor = useColor('background');
@@ -14,9 +16,53 @@ export default function ConfirmationScreen() {
   const mutedTextColor = useColor('textMuted');
   const greenColor = useColor('green');
 
-  const handleContinue = () => {
-    // Redirect to the Onboarding screen
-    router.replace('/onboarding' as any);
+  const [verifying, setVerifying] = useState(false);
+  const [resending, setResending] = useState(false);
+
+  const handleVerifiedCheck = async () => {
+    const user = auth.currentUser;
+    if (!user) {
+      Alert.alert('No active session', 'Please sign in or create an account.');
+      router.replace('/welcome' as any);
+      return;
+    }
+
+    setVerifying(true);
+    try {
+      // Reload the Firebase user to sync verification status
+      await user.reload();
+      
+      if (auth.currentUser?.emailVerified) {
+        // Navigate to Language Selection onboarding
+        router.replace('/onboarding' as any);
+      } else {
+        Alert.alert('Not Verified', "Your email hasn't been verified yet.");
+      }
+    } catch (err: any) {
+      console.warn('Verification check error:', err);
+      Alert.alert('Verification Check Failed', err.message || 'Please try again.');
+    } finally {
+      setVerifying(false);
+    }
+  };
+
+  const handleResendEmail = async () => {
+    const user = auth.currentUser;
+    if (!user) {
+      Alert.alert('Error', 'No active session found. Please register again.');
+      return;
+    }
+
+    setResending(true);
+    try {
+      await sendEmailVerification(user);
+      Alert.alert('Email Sent', 'A verification link has been resent to your email.');
+    } catch (err: any) {
+      console.warn('Resend verification error:', err);
+      Alert.alert('Resend Failed', err.message || 'Please wait a moment before trying again.');
+    } finally {
+      setResending(false);
+    }
   };
 
   return (
@@ -32,7 +78,7 @@ export default function ConfirmationScreen() {
           Verify Your Email
         </Text>
         <Text variant="body" style={[styles.subtitle, { color: mutedTextColor }]}>
-          {"We've"} sent a verification link to your email address. Please click the link in your email to verify and activate your account.
+          We've sent a verification link to your email. Please verify your email before continuing.
         </Text>
       </View>
 
@@ -41,7 +87,8 @@ export default function ConfirmationScreen() {
         <Button
           variant="default"
           size="lg"
-          onPress={handleContinue}
+          onPress={handleVerifiedCheck}
+          loading={verifying}
           style={styles.continueButton}
         >
           <Text
@@ -53,7 +100,27 @@ export default function ConfirmationScreen() {
               fontWeight: '600',
             }}
           >
-            Continue
+            I've Verified My Email
+          </Text>
+        </Button>
+
+        <Button
+          variant="outline"
+          size="lg"
+          onPress={handleResendEmail}
+          loading={resending}
+          style={styles.resendButton}
+        >
+          <Text
+            style={{
+              width: '100%',
+              textAlign: 'center',
+              color: textColor,
+              fontSize: 16,
+              fontWeight: '600',
+            }}
+          >
+            Resend Email
           </Text>
         </Button>
       </View>
@@ -100,11 +167,20 @@ const styles = StyleSheet.create({
   footer: {
     width: '100%',
     alignItems: 'center',
+    gap: 12,
   },
   continueButton: {
     width: '100%',
     height: 56,
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  resendButton: {
+    width: '100%',
+    height: 56,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderColor: '#E4E4E7',
+    borderWidth: 1.5,
   },
 });

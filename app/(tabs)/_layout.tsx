@@ -1,4 +1,5 @@
-import { Platform } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { Platform, ActivityIndicator, View as RNView } from 'react-native';
 import { useColor } from '@/hooks/useColor';
 import MaterialIcons from '@expo/vector-icons/Feather';
 import {
@@ -7,11 +8,45 @@ import {
   NativeTabs,
   VectorIcon,
 } from 'expo-router/unstable-native-tabs';
+import { auth } from '@/services/firebase';
+import { router } from 'expo-router';
 
 export default function TabsLayout() {
   const red = useColor('red');
   const primary = useColor('primary');
   const foreground = useColor('foreground');
+
+  const [initializing, setInitializing] = useState(true);
+  const [user, setUser] = useState(auth.currentUser);
+
+  useEffect(() => {
+    // Initial check and subscription to auth state changes
+    const unsubscribe = auth.onAuthStateChanged((usr) => {
+      setUser(usr);
+      if (initializing) setInitializing(false);
+
+      if (!usr) {
+        router.replace('/welcome' as any);
+      } else if (!usr.emailVerified) {
+        router.replace('/confirmation' as any);
+      }
+    });
+
+    return unsubscribe;
+  }, [initializing]);
+
+  if (initializing) {
+    return (
+      <RNView style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#FFFFFF' }}>
+        <ActivityIndicator size="large" color="#000000" />
+      </RNView>
+    );
+  }
+
+  if (!user || !user.emailVerified) {
+    return null;
+  }
+
 
   return (
     <NativeTabs
