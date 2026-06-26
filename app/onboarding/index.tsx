@@ -90,11 +90,11 @@ export default function LanguageSelectionScreen() {
       {/* Middle Section: Hero & Question */}
       <View style={styles.middleSection}>
         <View style={styles.heroContainer}>
-          <Image
+          {/* <Image
             source={require('@/assets/images/learning-hero.png')}
             style={styles.heroImage}
             resizeMode="contain"
-          />
+          /> */}
         </View>
 
         <View style={styles.questionSection}>
@@ -121,7 +121,7 @@ export default function LanguageSelectionScreen() {
                 isSelected ? styles.selectedCard : styles.unselectedCard,
               ]}
             >
-              <Text style={styles.cardIcon}>{lang.flagEmoji}</Text>
+              {/* <Text style={styles.cardIcon}>{lang.flagEmoji}</Text> */}
               <Text
                 style={[
                   styles.languageName,

@@ -90,11 +90,11 @@ export default function DailyGoalSelectionScreen() {
       {/* Middle Section: Hero & Question */}
       <View style={styles.middleSection}>
         <View style={styles.heroContainer}>
-          <Image
+          {/* <Image
             source={require('@/assets/images/goal-hero.png')}
             style={styles.heroImage}
             resizeMode="contain"
-          />
+          /> */}
         </View>
 
         <View style={styles.questionSection}>

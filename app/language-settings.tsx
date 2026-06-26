@@ -99,7 +99,7 @@ export default function LanguageSettingsScreen() {
                   ]}
                 >
                   <View style={styles.languageLeft}>
-                    <Text style={styles.flagEmoji}>{lang.flagEmoji}</Text>
+                    {/* <Text style={styles.flagEmoji}>{lang.flagEmoji}</Text> */}
                     <View>
                       <Text style={styles.languageName}>{lang.name}</Text>
                       <Text style={styles.languageDesc}>{lang.description}</Text>

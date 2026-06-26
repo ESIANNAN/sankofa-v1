@@ -152,11 +152,11 @@ export default function OnboardingSummaryScreen() {
       {/* Middle Section: Hero & Question */}
       <View style={styles.middleSection}>
         <View style={styles.heroContainer}>
-          <Image
+          {/* <Image
             source={require('@/assets/images/success-hero.png')}
             style={styles.heroImage}
             resizeMode="contain"
-          />
+          /> */}
         </View>
 
         <View style={styles.messageSection}>
