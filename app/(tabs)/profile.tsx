@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, ScrollView, TouchableOpacity, Image } from 'react-native';
+import { StyleSheet, ScrollView, TouchableOpacity, Image, Modal, Share, Alert, Pressable } from 'react-native';
 import { router } from 'expo-router';
 import { View } from '@/components/ui/view';
 import { Text } from '@/components/ui/text';
@@ -15,6 +15,7 @@ import {
   BookOpen,
   CheckCircle2,
   Bookmark,
+  X,
 } from 'lucide-react-native';
 
 export default function ProfileScreen() {
@@ -27,6 +28,26 @@ export default function ProfileScreen() {
   const [userPhoto, setUserPhoto] = useState<string | null>(null);
   const [selectedLanguage, setSelectedLanguage] = useState('Asante Twi');
   const [experienceLevel, setExperienceLevel] = useState('Beginner - Level 1');
+  const [shareModalVisible, setShareModalVisible] = useState(false);
+  const [copied, setCopied] = useState(false);
+
+  const handleNativeShare = async () => {
+    try {
+      const result = await Share.share({
+        message: `Check out my language learning progress on Sankofa! I am learning ${selectedLanguage} and I'm at ${experienceLevel}. Join me!`,
+      });
+      if (result.action === Share.sharedAction) {
+        // Shared
+      }
+    } catch (error: any) {
+      Alert.alert('Error', error.message);
+    }
+  };
+
+  const handleCopyLink = () => {
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
 
   useEffect(() => {
     // Listen to Firebase Auth state change to grab displayName and photoURL
@@ -99,8 +120,9 @@ export default function ProfileScreen() {
   };
 
   return (
-    <ScrollView
-      style={[styles.container, { backgroundColor }]}
+    <View style={[styles.container, { backgroundColor }]}>
+      <ScrollView
+        style={styles.scrollView}
       contentContainerStyle={{
         paddingTop: Math.max(insets.top, 16),
         paddingBottom: Math.max(insets.bottom, 24) + 80, // Space for bottom tab bar
@@ -114,7 +136,7 @@ export default function ProfileScreen() {
         <View style={styles.headerIcons}>
           <TouchableOpacity
             activeOpacity={0.7}
-            onPress={() => router.push('/share-profile' as any)}
+            onPress={() => setShareModalVisible(true)}
             style={styles.headerButton}
           >
             <Icon name={Share2} color={textColor} size={22} />
@@ -177,7 +199,7 @@ export default function ProfileScreen() {
           <View style={styles.statsRow}>
             <Card style={styles.statCard}>
               <Icon name={Flame} color="#FF9500" size={24} />
-              <Text style={[styles.statValue, { color: textColor }]}>5</Text>
+              <Text style={[styles.statValue, { color: textColor }]}>3</Text>
               <Text style={[styles.statLabel, { color: mutedTextColor }]}>Day streak</Text>
             </Card>
             <Card style={styles.statCard}>
@@ -233,7 +255,107 @@ export default function ProfileScreen() {
         </View>
       </View>
     </ScrollView>
-  );
+
+    <Modal
+      visible={shareModalVisible}
+      transparent={true}
+      animationType="slide"
+      onRequestClose={() => setShareModalVisible(false)}
+    >
+      <Pressable 
+        style={styles.modalOverlay} 
+        onPress={() => setShareModalVisible(false)}
+      >
+        <Pressable style={styles.modalContent} onPress={(e) => e.stopPropagation()}>
+          <View style={styles.pullTab} />
+
+          <View style={styles.modalHeader}>
+            <Text style={styles.modalTitle}>Share Profile</Text>
+            <TouchableOpacity 
+              onPress={() => setShareModalVisible(false)}
+              style={styles.closeButton}
+            >
+              <Icon name={X} color={textColor} size={20} />
+            </TouchableOpacity>
+          </View>
+
+          <Text style={styles.modalDescription}>
+            Share your achievements and invite friends to learn African languages!
+          </Text>
+
+          {/* Profile Card Preview */}
+          <View style={styles.previewCard}>
+            <View style={styles.previewHeader}>
+              {userPhoto ? (
+                <Image source={{ uri: userPhoto }} style={styles.previewAvatar} />
+              ) : (
+                <View style={styles.previewAvatarPlaceholder}>
+                  <Text style={styles.previewAvatarText}>
+                    {getFirstLetter(userName)}
+                  </Text>
+                </View>
+              )}
+              <View>
+                <Text style={styles.previewName}>{userName}</Text>
+                <Text style={styles.previewSubtext}>Learning {selectedLanguage}</Text>
+              </View>
+            </View>
+
+            <View style={styles.previewDivider} />
+
+            <View style={styles.previewStatsRow}>
+              <View style={styles.previewStatCol}>
+                <Icon name={Flame} color="#FF9500" size={18} />
+                <Text style={styles.previewStatValue}>3 Day Streak</Text>
+              </View>
+              <View style={styles.previewStatCol}>
+                <Icon name={BookOpen} color="#007AFF" size={18} />
+                <Text style={styles.previewStatValue}>{experienceLevel.split(' - ')[0]}</Text>
+              </View>
+            </View>
+          </View>
+
+          {/* Share Options */}
+          <View style={styles.shareOptionsContainer}>
+            <TouchableOpacity
+              activeOpacity={0.7}
+              onPress={handleNativeShare}
+              style={[styles.shareOptionButton, { backgroundColor: '#25D366' }]}
+            >
+              <Text style={styles.shareOptionText}>Share to WhatsApp</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              activeOpacity={0.7}
+              onPress={handleNativeShare}
+              style={[styles.shareOptionButton, { backgroundColor: '#000000' }]}
+            >
+              <Text style={styles.shareOptionText}>Share to X (Twitter)</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              activeOpacity={0.7}
+              onPress={handleCopyLink}
+              style={[styles.shareOptionButton, styles.copyLinkButton]}
+            >
+              <Text style={styles.copyLinkButtonText}>
+                {copied ? '✓ Link Copied!' : '🔗 Copy Profile Link'}
+              </Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              activeOpacity={0.7}
+              onPress={handleNativeShare}
+              style={[styles.shareOptionButton, styles.systemShareButton]}
+            >
+              <Text style={styles.systemShareButtonText}>💬 More Share Options</Text>
+            </TouchableOpacity>
+          </View>
+        </Pressable>
+      </Pressable>
+    </Modal>
+  </View>
+);
 }
 
 const styles = StyleSheet.create({
@@ -388,7 +510,7 @@ const styles = StyleSheet.create({
   statCard: {
     flex: 1,
 
-    height: 130,          // reduced from square size
+    height: 130,
     paddingVertical: 8,
     paddingHorizontal: 8,
 
@@ -476,5 +598,162 @@ const styles = StyleSheet.create({
     fontSize: 13,
     fontWeight: '700',
     color: '#000000',
+  },
+  scrollView: {
+    flex: 1,
+  },
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.4)',
+    justifyContent: 'flex-end',
+  },
+  modalContent: {
+    backgroundColor: '#FFFFFF',
+    borderTopLeftRadius: 24,
+    borderTopRightRadius: 24,
+    paddingHorizontal: 24,
+    paddingBottom: 40,
+    paddingTop: 12,
+    alignItems: 'center',
+    shadowColor: '#000000',
+    shadowOffset: { width: 0, height: -4 },
+    shadowOpacity: 0.1,
+    shadowRadius: 12,
+    elevation: 10,
+  },
+  pullTab: {
+    width: 40,
+    height: 5,
+    borderRadius: 2.5,
+    backgroundColor: '#E5E5EA',
+    marginBottom: 20,
+  },
+  modalHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    width: '100%',
+    marginBottom: 12,
+  },
+  modalTitle: {
+    fontSize: 20,
+    fontWeight: '800',
+    color: '#000000',
+  },
+  closeButton: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    backgroundColor: '#F4F4F5',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  modalDescription: {
+    fontSize: 14,
+    color: '#71717a',
+    textAlign: 'center',
+    marginBottom: 20,
+    lineHeight: 20,
+    paddingHorizontal: 10,
+  },
+  previewCard: {
+    width: '100%',
+    backgroundColor: '#FAF9F6',
+    borderWidth: 1,
+    borderColor: '#E5E5E5',
+    borderRadius: 16,
+    padding: 16,
+    marginBottom: 24,
+  },
+  previewHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+  },
+  previewAvatar: {
+    width: 50,
+    height: 50,
+    borderRadius: 25,
+    borderWidth: 1,
+    borderColor: '#E5E5E5',
+  },
+  previewAvatarPlaceholder: {
+    width: 50,
+    height: 50,
+    borderRadius: 25,
+    backgroundColor: '#FAF9F6',
+    borderWidth: 1,
+    borderColor: '#E5E5E5',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  previewAvatarText: {
+    fontSize: 20,
+    fontWeight: '800',
+    color: '#000000',
+  },
+  previewName: {
+    fontSize: 16,
+    fontWeight: '700',
+    color: '#000000',
+  },
+  previewSubtext: {
+    fontSize: 13,
+    color: '#71717a',
+    fontWeight: '500',
+  },
+  previewDivider: {
+    height: 1,
+    backgroundColor: '#E5E5E5',
+    marginVertical: 12,
+  },
+  previewStatsRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+  },
+  previewStatCol: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+  },
+  previewStatValue: {
+    fontSize: 13,
+    fontWeight: '600',
+    color: '#000000',
+  },
+  shareOptionsContainer: {
+    width: '100%',
+    gap: 10,
+  },
+  shareOptionButton: {
+    width: '100%',
+    height: 48,
+    borderRadius: 24,
+    justifyContent: 'center',
+    alignItems: 'center',
+    flexDirection: 'row',
+  },
+  shareOptionText: {
+    color: '#FFFFFF',
+    fontSize: 15,
+    fontWeight: '700',
+  },
+  copyLinkButton: {
+    backgroundColor: '#FFFFFF',
+    borderWidth: 1,
+    borderColor: '#E5E5E5',
+  },
+  copyLinkButtonText: {
+    color: '#000000',
+    fontSize: 15,
+    fontWeight: '700',
+  },
+  systemShareButton: {
+    backgroundColor: '#F4F4F5',
+  },
+  systemShareButtonText: {
+    color: '#000000',
+    fontSize: 15,
+    fontWeight: '700',
   },
 });
