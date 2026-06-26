@@ -77,7 +77,7 @@ export default function HomeScreen() {
   }, []);
 
   const handleLessonClick = (lessonId: string) => {
-    router.push('/lesson' as any);
+    router.push(`/lesson?category=${lessonId}&language=${selectedLanguage}` as any);
   };
 
   return (
