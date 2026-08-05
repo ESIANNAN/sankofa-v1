@@ -374,7 +374,7 @@ export default function LessonScreen() {
       setCurrentIndex(currentIndex + 1);
     } else {
       // Navigate to Quiz Screen
-      router.push(`/quiz?category=${currentCategory}&language=${currentLanguage}` as any);
+      router.push(`/image-quiz?category=${currentCategory}&language=${currentLanguage}` as any);
     }
   };
 

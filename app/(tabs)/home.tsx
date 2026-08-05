@@ -35,7 +35,7 @@ export default function HomeScreen() {
     } else {
       AsyncStorage.getItem('user_name').then((stored) => {
         if (stored) setUserName(stored);
-      }).catch(() => {});
+      }).catch(() => { });
     }
 
     // Listen to Firebase Auth state change to grab displayName
@@ -262,9 +262,9 @@ const styles = StyleSheet.create({
   },
   wordOfTheDayCard: {
     padding: 20,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: '#FFFBEC',
     borderWidth: 1,
-    borderColor: '#E5E5E5',
+    borderColor: '#D8CA70',
     borderRadius: 18,
     marginBottom: 20,
     shadowColor: '#000000',
@@ -317,9 +317,9 @@ const styles = StyleSheet.create({
     padding: 12,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#FFFFFF',
+    backgroundColor: '#FFFCF0',
     borderWidth: 1,
-    borderColor: '#E5E5E5',
+    borderColor: '#FFFCF0',
     borderRadius: 18,
     shadowColor: '#000000',
     shadowOffset: { width: 0, height: 2 },
