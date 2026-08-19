@@ -12,14 +12,14 @@ export default function WelcomeScreen() {
   const mutedTextColor = useColor('textMuted');
   const tintColor = useColor('primary');
 
+  // Welcome Screen → Intro Onboarding
   const handleGetStarted = () => {
-    // Navigate to the signup screen
-    router.push('/signup' as any);
+    router.push('/intro-onboarding');
   };
 
+  // Welcome Screen → Login
   const handleLogin = () => {
-    // Navigate to the login screen
-    router.push('/login' as any);
+    router.push('/login');
   };
 
   return (
@@ -28,20 +28,30 @@ export default function WelcomeScreen() {
       showsVerticalScrollIndicator={false}
     >
       <View style={styles.container}>
-        {/* Centered Left-Aligned Content Section */}
+
         <View style={styles.middleSection}>
-          <Text variant="heading" style={[styles.title, { color: textColor }]}>
+          <Text
+            variant="heading"
+            style={[styles.title, { color: textColor }]}
+          >
             Akwaaba,
           </Text>
-          <Text variant="subtitle" style={[styles.welcomeText, { color: textColor }]}>
+
+          <Text
+            variant="subtitle"
+            style={[styles.welcomeText, { color: textColor }]}
+          >
             Sankofa
           </Text>
-          <Text variant="body" style={[styles.description, { color: mutedTextColor }]}>
+
+          <Text
+            variant="body"
+            style={[styles.description, { color: mutedTextColor }]}
+          >
             Rediscover Ghanaian languages and culture through learning.
           </Text>
         </View>
 
-        {/* Action Button Section */}
         <View style={styles.footer}>
           <Button
             variant="default"
@@ -61,6 +71,7 @@ export default function WelcomeScreen() {
             Log In
           </Text>
         </View>
+
       </View>
     </ScrollView>
   );
@@ -70,6 +81,7 @@ const styles = StyleSheet.create({
   scrollContainer: {
     flexGrow: 1,
   },
+
   container: {
     flex: 1,
     paddingHorizontal: 24,
@@ -79,6 +91,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     minHeight: '100%',
   },
+
   middleSection: {
     flex: 1,
     justifyContent: 'center',
@@ -86,6 +99,7 @@ const styles = StyleSheet.create({
     width: '100%',
     paddingVertical: 40,
   },
+
   title: {
     fontSize: 48,
     fontWeight: '800',
@@ -93,6 +107,7 @@ const styles = StyleSheet.create({
     marginBottom: 4,
     textAlign: 'left',
   },
+
   welcomeText: {
     fontSize: 28,
     fontWeight: '600',
@@ -100,21 +115,25 @@ const styles = StyleSheet.create({
     marginBottom: 4,
     lineHeight: 28,
   },
+
   description: {
     fontSize: 16,
     textAlign: 'left',
     maxWidth: 350,
     lineHeight: 24,
   },
+
   footer: {
     width: '100%',
     alignItems: 'center',
     gap: 4,
   },
+
   ctaButton: {
     width: '100%',
     height: 67,
   },
+
   loginLink: {
     fontSize: 16,
     fontWeight: '600',

@@ -58,7 +58,7 @@ function syncNativeAppearance(mode: Mode) {
   if (typeof Appearance.setColorScheme !== 'function') return;
   // RN 0.86 replaced the old `null` sentinel ("follow the system") with
   // `'unspecified'`.
-  Appearance.setColorScheme(mode === 'system' ? 'unspecified' : mode);
+  Appearance.setColorScheme((mode === 'system' ? 'unspecified' : mode) as any);
 }
 
 type Props = {
