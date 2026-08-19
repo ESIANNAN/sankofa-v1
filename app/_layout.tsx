@@ -45,7 +45,7 @@ export default function RootLayout() {
           <Stack.Screen name='(tabs)' options={{ headerShown: false }} />
 
           <Stack.Screen
-            name='sheet'
+            name='(settings)/sheet'
             options={{
               headerShown: false,
               sheetGrabberVisible: true,
