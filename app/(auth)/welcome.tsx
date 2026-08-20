@@ -12,7 +12,7 @@ export default function WelcomeScreen() {
   const mutedTextColor = useColor('textMuted');
   const tintColor = useColor('primary');
 
-  // Welcome Screen → Intro Onboarding
+  // Welcome Screen to Intro Onboarding
   const handleGetStarted = () => {
     router.push('/intro-onboarding');
   };

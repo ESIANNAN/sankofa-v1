@@ -149,7 +149,7 @@ export default function LoginScreen() {
       <View style={styles.container}>
         {/* Top Section */}
         <View style={styles.topSection}>
-          <Text style={styles.topLabel}>Sankofa</Text>
+
           <TouchableOpacity onPress={handleBack} style={styles.backButton}>
             <Icon name={ChevronLeft} color={textColor} size={24} />
           </TouchableOpacity>
@@ -268,14 +268,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 20,
   },
-  topLabel: {
-    fontSize: 24,
-    fontWeight: '700',
-    letterSpacing: -0.5,
-    color: '#000000',
-    marginBottom: 16,
-    textTransform: 'uppercase',
-  },
   backButton: {
     alignSelf: 'flex-start',
     width: 40,
@@ -298,9 +290,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   inputField: {
-    width: 350,
+    width: 360,
     height: 60,
-    borderRadius: 15,
+    borderRadius: 30,
     borderColor: '#E4E4E7',
     borderWidth: 1,
   },
@@ -308,16 +300,16 @@ const styles = StyleSheet.create({
     padding: 8,
   },
   loginButton: {
-    width: 350,
+    width: 360,
     height: 55,
     borderRadius: 30,
-    backgroundColor: '#000000',
+    backgroundColor: '#4aafd3ff',
     justifyContent: 'center',
     alignItems: 'center',
   },
   loginButtonText: {
     color: '#FFFFFF',
-    fontWeight: '600', // Semi-bold
+    fontWeight: '700', // Semi-bold
     fontSize: 16,
     textAlign: 'center',
   },
@@ -326,7 +318,7 @@ const styles = StyleSheet.create({
     paddingVertical: 4,
   },
   forgotPasswordText: {
-    color: '#000000',
+    color: '#4aafd3ff',
     fontSize: 15,
     textDecorationLine: 'underline',
     fontWeight: '500',

@@ -71,7 +71,6 @@ export default function ResetPasswordScreen() {
       <View style={styles.container}>
         {/* Top Section */}
         <View style={styles.topSection}>
-          <Text style={styles.topLabel}>FORGOT PASSWORD</Text>
           <TouchableOpacity onPress={handleBack} style={styles.backButton}>
             <Icon name={ChevronLeft} color={textColor} size={24} />
           </TouchableOpacity>
@@ -220,9 +219,9 @@ const styles = StyleSheet.create({
     gap: 20,
   },
   inputField: {
-    width: 350,
+    width: 360,
     height: 60,
-    borderRadius: 15,
+    borderRadius: 30,
     borderColor: '#E4E4E7',
     borderWidth: 1,
   },
@@ -230,10 +229,10 @@ const styles = StyleSheet.create({
     padding: 8,
   },
   resetButton: {
-    width: 350,
+    width: 360,
     height: 55,
     borderRadius: 30,
-    backgroundColor: '#000000',
+    backgroundColor: '#4aafd3ff',
     justifyContent: 'center',
     alignItems: 'center',
     marginTop: 10,
