@@ -111,7 +111,7 @@ export default function SignupScreen() {
   };
 
   const handleLoginRedirect = () => {
-    router.push('/login' as any);
+    router.replace('/login' as any);
   };
 
   return (
@@ -121,13 +121,6 @@ export default function SignupScreen() {
       keyboardShouldPersistTaps="handled"
     >
       <View style={styles.container}>
-        {/* Top Navigation Row */}
-        <View style={styles.headerRow}>
-          <TouchableOpacity onPress={handleBack} style={styles.backButton}>
-            <Icon name={ChevronLeft} color={textColor} size={24} />
-          </TouchableOpacity>
-        </View>
-
         {/* Content Area */}
         <View style={styles.content}>
           <Text variant="heading" style={[styles.title, { color: textColor }]}>
@@ -146,6 +139,7 @@ export default function SignupScreen() {
               autoCapitalize="words"
               autoCorrect={false}
               variant="outline"
+              style={{ borderRadius: 30 }}
             />
 
             <Input
@@ -158,6 +152,7 @@ export default function SignupScreen() {
               autoCapitalize="none"
               autoCorrect={false}
               variant="outline"
+              style={{ borderRadius: 30 }}
             />
 
             <Input
@@ -170,6 +165,7 @@ export default function SignupScreen() {
               autoCapitalize="none"
               autoCorrect={false}
               variant="outline"
+              style={{ borderRadius: 30 }}
               rightComponent={
                 <TouchableOpacity onPress={() => setShowPassword(!showPassword)} style={styles.toggleButton}>
                   <Icon name={showPassword ? EyeOff : Eye} color={mutedTextColor} size={20} />
@@ -186,7 +182,7 @@ export default function SignupScreen() {
             size="lg"
             onPress={handleSignup}
             loading={loading}
-            style={styles.ctaButton}
+            style={[styles.ctaButton, { backgroundColor: '#4aafd3ff' }]}
           >
             <Text style={{ textAlign: 'center', width: '100%', color: 'white' }}>
               Continue
@@ -194,12 +190,12 @@ export default function SignupScreen() {
           </Button>
 
           <View style={styles.loginPrompt}>
-            <Text variant="caption" style={{ color: mutedTextColor }}>
+            <Text variant="caption" style={{ color: '#666666' }}>
               Already have an account?{' '}
             </Text>
             <Text
               variant="link"
-              style={[styles.loginLink, { color: tintColor }]}
+              style={[styles.loginLink, { color: '#4aafd3ff' }]}
               onPress={handleLoginRedirect}
             >
               Login
@@ -231,13 +227,7 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-start',
     marginBottom: 20,
   },
-  backButton: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
+
   content: {
     flex: 1,
     width: '100%',
@@ -246,7 +236,7 @@ const styles = StyleSheet.create({
     paddingBottom: 40,
   },
   title: {
-    fontSize: 36,
+    fontSize: 24,
     fontWeight: '800',
     letterSpacing: -0.5,
     marginBottom: 8,

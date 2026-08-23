@@ -7,19 +7,19 @@ import { View } from '@/components/ui/view';
 import { useColor } from '@/hooks/useColor';
 
 export default function WelcomeScreen() {
-  const backgroundColor = useColor('background');
-  const textColor = useColor('text');
-  const mutedTextColor = useColor('textMuted');
-  const tintColor = useColor('primary');
+  const backgroundColor = '#fff9e5';
+  const textColor = '#402a21';
+  const mutedTextColor = '#5c544dff';
+  const tintColor = '#70e000';
 
   // Welcome Screen to Intro Onboarding
   const handleGetStarted = () => {
-    router.push('/intro-onboarding');
+    router.replace('/intro-onboarding');
   };
 
   // Welcome Screen → Login
   const handleLogin = () => {
-    router.push('/login');
+    router.replace('/login');
   };
 
   return (
@@ -57,7 +57,7 @@ export default function WelcomeScreen() {
             variant="default"
             size="lg"
             onPress={handleGetStarted}
-            style={styles.ctaButton}
+            style={[styles.ctaButton, { backgroundColor: '#70e000' }]}
             textStyle={{ textAlign: 'center', flex: 1 }}
           >
             Begin your Journey
@@ -137,7 +137,7 @@ const styles = StyleSheet.create({
   loginLink: {
     fontSize: 16,
     fontWeight: '600',
-    textDecorationLine: 'underline',
+    textDecorationLine: 'none',
     paddingVertical: 15,
   },
 });

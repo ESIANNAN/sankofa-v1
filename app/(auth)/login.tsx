@@ -125,11 +125,11 @@ export default function LoginScreen() {
   };
 
   const handleBack = () => {
-    router.replace('/welcome' as any); // Navigate back to Welcome screen as per spec
+    router.replace('/signup' as any); // Navigate back to signup screen 
   };
 
   const handleForgotPassword = () => {
-    router.push('/forgot-password' as any); // Navigate to Forgot Password Screen as per spec
+    router.push('/forgot-password' as any); // Navigate to Forgot Password Screen 
   };
 
   const handleGoogleSignIn = () => {

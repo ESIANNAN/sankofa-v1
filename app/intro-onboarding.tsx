@@ -73,7 +73,7 @@ export default function IntroOnboarding() {
   ];
 
   const goToAuth = () => {
-    router.push('/signup');
+    router.replace('/signup');
   };
 
   return (
