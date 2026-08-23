@@ -1,10 +1,9 @@
-import React from 'react';
-import { StyleSheet, ScrollView, Platform } from 'react-native';
+import React, { useEffect, useRef } from 'react';
+import { StyleSheet, ScrollView, Platform, Animated, Pressable } from 'react-native';
 import { router } from 'expo-router';
 import { Button } from '@/components/ui/button';
 import { Text } from '@/components/ui/text';
 import { View } from '@/components/ui/view';
-import { useColor } from '@/hooks/useColor';
 
 export default function WelcomeScreen() {
   const backgroundColor = '#fff9e5';
@@ -12,15 +11,34 @@ export default function WelcomeScreen() {
   const mutedTextColor = '#5c544dff';
   const tintColor = '#70e000';
 
-  // Welcome Screen to Intro Onboarding
-  const handleGetStarted = () => {
-    router.replace('/intro-onboarding');
-  };
+  //  Button animations 
+  const pulseAnim = useRef(new Animated.Value(1)).current;
+  const glowAnim = useRef(new Animated.Value(0.3)).current;
+  const pressAnim = useRef(new Animated.Value(1)).current;
 
-  // Welcome Screen → Login
-  const handleLogin = () => {
-    router.replace('/login');
-  };
+  useEffect(() => {
+    Animated.loop(
+      Animated.sequence([
+        Animated.timing(pulseAnim, { toValue: 1.03, duration: 900, useNativeDriver: true }),
+        Animated.timing(pulseAnim, { toValue: 1, duration: 900, useNativeDriver: true }),
+      ])
+    ).start();
+
+    Animated.loop(
+      Animated.sequence([
+        Animated.timing(glowAnim, { toValue: 1, duration: 1000, useNativeDriver: true }),
+        Animated.timing(glowAnim, { toValue: 0.3, duration: 1000, useNativeDriver: true }),
+      ])
+    ).start();
+  }, []);
+
+  const handlePressIn = () =>
+    Animated.spring(pressAnim, { toValue: 0.96, useNativeDriver: true, speed: 20 }).start();
+  const handlePressOut = () =>
+    Animated.spring(pressAnim, { toValue: 1, useNativeDriver: true, speed: 20 }).start();
+
+  const handleGetStarted = () => router.replace('/intro-onboarding');
+  const handleLogin = () => router.replace('/login');
 
   return (
     <ScrollView
@@ -30,38 +48,33 @@ export default function WelcomeScreen() {
       <View style={styles.container}>
 
         <View style={styles.middleSection}>
-          <Text
-            variant="heading"
-            style={[styles.title, { color: textColor }]}
-          >
+          <Text variant="heading" style={[styles.title, { color: textColor }]}>
             Akwaaba,
           </Text>
-
-          <Text
-            variant="subtitle"
-            style={[styles.welcomeText, { color: textColor }]}
-          >
+          <Text variant="subtitle" style={[styles.welcomeText, { color: textColor }]}>
             Sankofa
           </Text>
-
-          <Text
-            variant="body"
-            style={[styles.description, { color: mutedTextColor }]}
-          >
+          <Text variant="body" style={[styles.description, { color: mutedTextColor }]}>
             Rediscover Ghanaian languages and culture through learning.
           </Text>
         </View>
 
         <View style={styles.footer}>
-          <Button
-            variant="default"
-            size="lg"
-            onPress={handleGetStarted}
-            style={[styles.ctaButton, { backgroundColor: '#70e000' }]}
-            textStyle={{ textAlign: 'center', flex: 1 }}
+
+          {/* ── GAMIFIED BUTTON ── */}
+          <Animated.View
+            style={[styles.buttonOuter, { transform: [{ scale: pulseAnim }] }]}
           >
-            Begin your Journey
-          </Button>
+            {/* Glow ring */}
+            <Animated.View style={[styles.glowRing, { opacity: glowAnim }]} />
+
+            <Pressable onPress={handleGetStarted} onPressIn={handlePressIn} onPressOut={handlePressOut}>
+              <Animated.View style={[styles.ctaButton, { transform: [{ scale: pressAnim }] }]}>
+                <View style={styles.buttonShine} />
+                <Text style={styles.ctaText}>Begin your Journey</Text>
+              </Animated.View>
+            </Pressable>
+          </Animated.View>
 
           <Text
             variant="link"
@@ -78,9 +91,7 @@ export default function WelcomeScreen() {
 }
 
 const styles = StyleSheet.create({
-  scrollContainer: {
-    flexGrow: 1,
-  },
+  scrollContainer: { flexGrow: 1 },
 
   container: {
     flex: 1,
@@ -129,14 +140,71 @@ const styles = StyleSheet.create({
     gap: 4,
   },
 
+  buttonOuter: {
+    width: '100%',
+    position: 'relative',
+  },
+
+  //  Breathing glow ring
+  glowRing: {
+    position: 'absolute',
+    top: -4, left: -4, right: -4, bottom: -4,
+    borderRadius: 22,
+    borderWidth: 3,
+    borderColor: '#70e000',
+    shadowColor: '#70e000',
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 1,
+    shadowRadius: 14,
+    elevation: 10,
+  },
+
+  // Main button 
   ctaButton: {
     width: '100%',
     height: 67,
+    backgroundColor: '#70e000',
+    borderRadius: 18,
+
+    // border weight
+    borderWidth: 3,
+    borderColor: '#4aaa00',
+    borderBottomWidth: 5,
+    borderBottomColor: '#3a8800',
+
+    alignItems: 'center',
+    justifyContent: 'center',
+    overflow: 'hidden',
+    position: 'relative',
+
+    shadowColor: '#70e000',
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.5,
+    shadowRadius: 14,
+    elevation: 10,
+  },
+
+  //  Shine strip 
+  buttonShine: {
+    position: 'absolute',
+    top: 0, left: 0, right: 0,
+    height: 26,
+    backgroundColor: 'rgba(255,255,255,0.18)',
+    borderTopLeftRadius: 16,
+    borderTopRightRadius: 16,
+  },
+
+  // Label
+  ctaText: {
+    fontSize: 17,
+    fontWeight: '800',
+    color: '#1a3d00',
+    letterSpacing: 0.2,
   },
 
   loginLink: {
-    fontSize: 16,
-    fontWeight: '600',
+    fontSize: 18,
+    fontWeight: '700',
     textDecorationLine: 'none',
     paddingVertical: 15,
   },
