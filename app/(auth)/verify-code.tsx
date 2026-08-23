@@ -224,7 +224,7 @@ const styles = StyleSheet.create({
   otpSlot: {
     width: 48,
     height: 54,
-    borderRadius: 15, // Rounded code boxes (radius 15) as requested
+    borderRadius: 15,
     borderWidth: 1,
     borderColor: '#E4E4E7',
     backgroundColor: '#FFFFFF',
@@ -233,7 +233,7 @@ const styles = StyleSheet.create({
     width: 350,
     height: 55,
     borderRadius: 30,
-    backgroundColor: '#4aafd3ff',
+    backgroundColor: '#00d5ff',
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -250,7 +250,7 @@ const styles = StyleSheet.create({
     marginTop: 8,
   },
   resendLink: {
-    color: '#000000',
+    color: '#00d5ff',
     fontWeight: '600',
     fontSize: 15,
     textDecorationLine: 'underline',

@@ -303,7 +303,7 @@ const styles = StyleSheet.create({
     width: 360,
     height: 55,
     borderRadius: 30,
-    backgroundColor: '#4aafd3ff',
+    backgroundColor: '#00d5ff',
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -318,7 +318,7 @@ const styles = StyleSheet.create({
     paddingVertical: 4,
   },
   forgotPasswordText: {
-    color: '#4aafd3ff',
+    color: '#00d5ff',
     fontSize: 15,
     textDecorationLine: 'underline',
     fontWeight: '500',

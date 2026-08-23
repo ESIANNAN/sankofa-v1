@@ -182,7 +182,7 @@ export default function SignupScreen() {
             size="lg"
             onPress={handleSignup}
             loading={loading}
-            style={[styles.ctaButton, { backgroundColor: '#4aafd3ff' }]}
+            style={[styles.ctaButton, { backgroundColor: '#00d5ff' }]}
           >
             <Text style={{ textAlign: 'center', width: '100%', color: 'white' }}>
               Continue
@@ -195,7 +195,7 @@ export default function SignupScreen() {
             </Text>
             <Text
               variant="link"
-              style={[styles.loginLink, { color: '#4aafd3ff' }]}
+              style={[styles.loginLink, { color: '#00d5ff' }]}
               onPress={handleLoginRedirect}
             >
               Login

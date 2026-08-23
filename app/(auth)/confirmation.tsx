@@ -29,11 +29,11 @@ export default function ConfirmationScreen() {
 
     setVerifying(true);
     try {
-      // Reload the Firebase user to sync verification status
+      // Reload the Firebase user to sync verification status 
       await user.reload();
-      
+
       if (auth.currentUser?.emailVerified) {
-        // Navigate to Language Selection onboarding
+        // Navigate to Language Selection onboarding 
         router.replace('/onboarding' as any);
       } else {
         Alert.alert('Not Verified', "Your email hasn't been verified yet.");
@@ -183,4 +183,4 @@ const styles = StyleSheet.create({
     borderColor: '#E4E4E7',
     borderWidth: 1.5,
   },
-});
+}); 
