@@ -6,7 +6,7 @@ import { Text } from '@/components/ui/text';
 import { View } from '@/components/ui/view';
 
 export default function WelcomeScreen() {
-  const backgroundColor = '#fff9e5';
+  const backgroundColor = '#FFF7EB';
   const textColor = '#402a21';
   const mutedTextColor = '#5c544dff';
   const tintColor = '#70e000';

@@ -2,15 +2,15 @@ import React, { useState } from 'react';
 import { StyleSheet, ScrollView, Platform, TouchableOpacity, Alert } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { router } from 'expo-router';
-import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Text } from '@/components/ui/text';
 import { View } from '@/components/ui/view';
 import { useColor } from '@/hooks/useColor';
-import { Mail, Lock, User, Eye, EyeOff, ChevronLeft } from 'lucide-react-native';
+import { Mail, Lock, User, Eye, EyeOff } from 'lucide-react-native';
 import { Icon } from '@/components/ui/icon';
 import { auth } from '@/services/firebase';
 import { createUserWithEmailAndPassword, updateProfile, sendEmailVerification } from 'firebase/auth';
+import { GameButton } from '@/components/ui/game-button';
 
 export default function SignupScreen() {
   const backgroundColor = useColor('background');
@@ -24,7 +24,6 @@ export default function SignupScreen() {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  // Field error states
   const [nameError, setNameError] = useState('');
   const [emailError, setEmailError] = useState('');
   const [passwordError, setPasswordError] = useState('');
@@ -35,7 +34,6 @@ export default function SignupScreen() {
   };
 
   const handleSignup = async () => {
-    // Reset errors
     setNameError('');
     setEmailError('');
     setPasswordError('');
@@ -67,20 +65,16 @@ export default function SignupScreen() {
 
     setLoading(true);
     try {
-      // 1. Create account
       const userCredential = await createUserWithEmailAndPassword(auth, email.trim(), password);
 
-      // 2. Update display name
       if (userCredential.user) {
         await updateProfile(userCredential.user, {
           displayName: fullName.trim(),
         });
       }
 
-      // 3. Send email verification
       await sendEmailVerification(userCredential.user);
 
-      // 4. Save name locally
       try {
         await AsyncStorage.setItem('user_name', fullName.trim());
         await AsyncStorage.setItem('user_email', email.trim());
@@ -88,7 +82,6 @@ export default function SignupScreen() {
         console.warn('Error saving user name:', e);
       }
 
-      // 5. Navigate to Verification Screen
       router.replace('/confirmation' as any);
     } catch (error: any) {
       console.warn('Firebase Registration Error:', error);
@@ -106,10 +99,6 @@ export default function SignupScreen() {
     }
   };
 
-  const handleBack = () => {
-    router.back();
-  };
-
   const handleLoginRedirect = () => {
     router.replace('/login' as any);
   };
@@ -121,12 +110,12 @@ export default function SignupScreen() {
       keyboardShouldPersistTaps="handled"
     >
       <View style={styles.container}>
+
         {/* Content Area */}
         <View style={styles.content}>
           <Text variant="heading" style={[styles.title, { color: textColor }]}>
             Create Account
           </Text>
-
 
           {/* Form Fields */}
           <View style={styles.form}>
@@ -167,7 +156,10 @@ export default function SignupScreen() {
               variant="outline"
               style={{ borderRadius: 30 }}
               rightComponent={
-                <TouchableOpacity onPress={() => setShowPassword(!showPassword)} style={styles.toggleButton}>
+                <TouchableOpacity
+                  onPress={() => setShowPassword(!showPassword)}
+                  style={styles.toggleButton}
+                >
                   <Icon name={showPassword ? EyeOff : Eye} color={mutedTextColor} size={20} />
                 </TouchableOpacity>
               }
@@ -177,17 +169,13 @@ export default function SignupScreen() {
 
         {/* Actions Footer */}
         <View style={styles.footer}>
-          <Button
-            variant="default"
-            size="lg"
+          <GameButton
             onPress={handleSignup}
             loading={loading}
-            style={[styles.ctaButton, { backgroundColor: '#00d5ff' }]}
-          >
-            <Text style={{ textAlign: 'center', width: '100%', color: 'white' }}>
-              Continue
-            </Text>
-          </Button>
+            label="Continue"
+            color="#00d5ff"
+            borderRadius={30}
+          />
 
           <View style={styles.loginPrompt}>
             <Text variant="caption" style={{ color: '#666666' }}>
@@ -202,6 +190,7 @@ export default function SignupScreen() {
             </Text>
           </View>
         </View>
+
       </View>
     </ScrollView>
   );
@@ -220,14 +209,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     minHeight: '100%',
   },
-  headerRow: {
-    width: '100%',
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'flex-start',
-    marginBottom: 20,
-  },
-
   content: {
     flex: 1,
     width: '100%',
@@ -242,13 +223,6 @@ const styles = StyleSheet.create({
     marginBottom: 8,
     textAlign: 'left',
   },
-  subtitle: {
-    fontSize: 16,
-    textAlign: 'left',
-    maxWidth: 280,
-    lineHeight: 22,
-    marginBottom: 32,
-  },
   form: {
     width: '100%',
     gap: 16,
@@ -260,13 +234,6 @@ const styles = StyleSheet.create({
     width: '100%',
     alignItems: 'center',
     gap: 4,
-
-  },
-  ctaButton: {
-    width: '100%',
-    height: 55,
-    justifyContent: 'center',
-    alignItems: 'center',
   },
   loginPrompt: {
     flexDirection: 'row',

@@ -134,7 +134,7 @@ export default function SettingsScreen() {
 
       {/* Content */}
       <ScrollView showsVerticalScrollIndicator={false} style={styles.content}>
-        
+
         {/* ACCOUNT SECTION */}
         <Text style={styles.sectionHeader}>ACCOUNT SECTION</Text>
         <Card style={styles.settingCard}>
@@ -344,7 +344,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#E5E5E5',
   },
   logoutButton: {
-    backgroundColor: '#000000',
+    backgroundColor: '#ff4433',
     height: 52,
     borderRadius: 26,
     justifyContent: 'center',
