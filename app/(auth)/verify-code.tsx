@@ -9,6 +9,7 @@ import { Icon } from '@/components/ui/icon';
 import { AvoidKeyboard } from '@/components/ui/avoid-keyboard';
 import { InputOTP, InputOTPRef } from '@/components/ui/input-otp';
 
+
 export default function VerifyCodeScreen() {
   const params = useLocalSearchParams();
   const email = (params.email as string) || 'your email';

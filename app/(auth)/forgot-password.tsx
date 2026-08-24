@@ -8,9 +8,10 @@ import { View } from '@/components/ui/view';
 import { Mail, ChevronLeft } from 'lucide-react-native';
 import { Icon } from '@/components/ui/icon';
 import { AvoidKeyboard } from '@/components/ui/avoid-keyboard';
+import { GameButton } from '@/components/ui/game-button';
 
 export default function ForgotPasswordScreen() {
-  const backgroundColor = '#FFFFFF'; // Clean white background as requested
+  const backgroundColor = '#FFFFFF';
   const textColor = '#000000';
   const mutedTextColor = '#71717a';
 
@@ -91,16 +92,15 @@ export default function ForgotPasswordScreen() {
               style={styles.inputField}
             />
 
-            <Button
-              variant="default"
-              size="lg"
+            <GameButton
               onPress={handleSendCode}
               loading={loading}
-              style={styles.resetButton}
-              textStyle={styles.resetButtonText}
-            >
-              Send Code
-            </Button>
+              label="Send Code"
+              color="#00d5ff"
+              width={360}
+              height={55}
+              borderRadius={30}
+            />
           </View>
         </View>
 

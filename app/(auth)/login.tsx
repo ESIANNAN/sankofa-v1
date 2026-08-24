@@ -165,7 +165,6 @@ export default function LoginScreen() {
             />
           </View>
 
-          {/* 👇 GameButton replaces the old Button */}
           <GameButton
             onPress={handleLogin}
             loading={loading}

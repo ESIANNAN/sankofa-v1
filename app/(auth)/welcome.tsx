@@ -145,11 +145,10 @@ const styles = StyleSheet.create({
     position: 'relative',
   },
 
-  //  Breathing glow ring
   glowRing: {
     position: 'absolute',
     top: -4, left: -4, right: -4, bottom: -4,
-    borderRadius: 22,
+    borderRadius: 32,
     borderWidth: 3,
     borderColor: '#70e000',
     shadowColor: '#70e000',
@@ -164,7 +163,7 @@ const styles = StyleSheet.create({
     width: '100%',
     height: 67,
     backgroundColor: '#70e000',
-    borderRadius: 18,
+    borderRadius: 30,
 
     // border weight
     borderWidth: 3,
