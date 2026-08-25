@@ -158,18 +158,18 @@ const styles = StyleSheet.create({
     elevation: 10,
   },
 
-  // Main button 
+  
   ctaButton: {
     width: '100%',
     height: 67,
-    backgroundColor: '#70e000',
+    backgroundColor: '#8AFF8A',
     borderRadius: 30,
 
     // border weight
     borderWidth: 3,
     borderColor: '#4aaa00',
     borderBottomWidth: 5,
-    borderBottomColor: '#3a8800',
+    borderBottomColor: '#00D100',
 
     alignItems: 'center',
     justifyContent: 'center',

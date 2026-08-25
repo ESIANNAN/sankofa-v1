@@ -33,9 +33,9 @@ export default function IntroOnboarding() {
   const steps: OnboardingStep[] = [
     {
       id: '1',
-      title: 'Tutorial Mode',
+      title: 'Choose Your Language',
       description:
-        'Follow along with our step-by-step tutorial. Use the buttons below to navigate at your own pace.',
+        'Learn Asante Twi, Fante, Ga, or Ewe-four of Ghana\'s most spoken languages, all in one app.',
       icon: (
         <StepIcon
           name="book-open"
@@ -46,9 +46,9 @@ export default function IntroOnboarding() {
     },
     {
       id: '2',
-      title: 'Learn the Basics',
+      title: 'Learn Through Culture',
       description:
-        'Master the fundamental features that will help you get the most out of our platform.',
+        'Every word comes with cultural context, proverbs, history, and meaning not just translation.',
       icon: (
         <StepIcon
           name="layers"
@@ -59,9 +59,9 @@ export default function IntroOnboarding() {
     },
     {
       id: '3',
-      title: 'Practice Makes Perfect',
+      title: 'Earn XP and Stay Consistent',
       description:
-        'Try out the features yourself in a safe environment before working with real data.',
+        'Build a daily streak, earn XP, unlock badges, and climb the leaderboard as you improve.',
       icon: (
         <StepIcon
           name="target"

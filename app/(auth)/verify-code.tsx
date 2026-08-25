@@ -1,20 +1,20 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { StyleSheet, ScrollView, Platform, TouchableOpacity } from 'react-native';
 import { router, useLocalSearchParams } from 'expo-router';
-import { Button } from '@/components/ui/button';
 import { Text } from '@/components/ui/text';
 import { View } from '@/components/ui/view';
 import { ChevronLeft } from 'lucide-react-native';
 import { Icon } from '@/components/ui/icon';
 import { AvoidKeyboard } from '@/components/ui/avoid-keyboard';
 import { InputOTP, InputOTPRef } from '@/components/ui/input-otp';
+import { GameButton } from '@/components/ui/game-button'; // 👈 added
 
 
 export default function VerifyCodeScreen() {
   const params = useLocalSearchParams();
   const email = (params.email as string) || 'your email';
 
-  const backgroundColor = '#FFFFFF'; // Clean white background as requested
+  const backgroundColor = '#FFFFFF';
   const textColor = '#000000';
   const mutedTextColor = '#71717a';
 
@@ -25,14 +25,12 @@ export default function VerifyCodeScreen() {
 
   const otpRef = useRef<InputOTPRef>(null);
 
-  // Focus on OTP input on screen load
   useEffect(() => {
     setTimeout(() => {
       otpRef.current?.focus();
     }, 100);
   }, []);
 
-  // Timer countdown implementation for resend code cooldown
   useEffect(() => {
     let interval: ReturnType<typeof setInterval> | undefined;
     if (timer > 0) {
@@ -57,7 +55,6 @@ export default function VerifyCodeScreen() {
 
     setTimeout(() => {
       setLoading(false);
-      // Validate code (simulated code is '123456')
       if (codeValue === '123456') {
         router.push({
           pathname: '/reset-password',
@@ -72,7 +69,6 @@ export default function VerifyCodeScreen() {
 
   const handleResendCode = () => {
     if (timer > 0) return;
-
     setTimer(30);
     setError('');
     otpRef.current?.clear();
@@ -90,6 +86,7 @@ export default function VerifyCodeScreen() {
       keyboardShouldPersistTaps="handled"
     >
       <View style={styles.container}>
+
         {/* Top Section */}
         <View style={styles.topSection}>
           <Text style={styles.topLabel}>FORGOT PASSWORD</Text>
@@ -120,16 +117,16 @@ export default function VerifyCodeScreen() {
               onComplete={(val) => handleVerify(val)}
             />
 
-            <Button
-              variant="default"
-              size="lg"
+            {/* 👇 GameButton replaces Button */}
+            <GameButton
               onPress={() => handleVerify()}
               loading={loading}
-              style={styles.continueButton}
-              textStyle={styles.continueButtonText}
-            >
-              Continue
-            </Button>
+              label="Continue"
+              color="#00d5ff"
+              width={350}
+              height={55}
+              borderRadius={30}
+            />
 
             {/* Resend Link Section */}
             <View style={styles.resendSection}>
@@ -149,7 +146,6 @@ export default function VerifyCodeScreen() {
           </View>
         </View>
 
-        {/* Bottom spacer for keyboard avoidance */}
         <AvoidKeyboard offset={20} />
       </View>
     </ScrollView>
@@ -230,20 +226,7 @@ const styles = StyleSheet.create({
     borderColor: '#E4E4E7',
     backgroundColor: '#FFFFFF',
   },
-  continueButton: {
-    width: 350,
-    height: 55,
-    borderRadius: 30,
-    backgroundColor: '#00d5ff',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  continueButtonText: {
-    color: '#FFFFFF',
-    fontWeight: '600',
-    fontSize: 16,
-    textAlign: 'center',
-  },
+  // continueButton and continueButtonText removed — handled by GameButton
   resendSection: {
     flexDirection: 'row',
     alignItems: 'center',

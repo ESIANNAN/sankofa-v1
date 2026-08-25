@@ -1,27 +1,26 @@
 import React, { useState } from 'react';
 import { StyleSheet, ScrollView, Platform, TouchableOpacity } from 'react-native';
 import { router } from 'expo-router';
-import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Text } from '@/components/ui/text';
 import { View } from '@/components/ui/view';
 import { Lock, Eye, EyeOff, ChevronLeft } from 'lucide-react-native';
 import { Icon } from '@/components/ui/icon';
 import { AvoidKeyboard } from '@/components/ui/avoid-keyboard';
+import { GameButton } from '@/components/ui/game-button'; // 👈 added
 
 export default function ResetPasswordScreen() {
-  const backgroundColor = '#FFFFFF'; // Clean white background as requested
+  const backgroundColor = '#FFFFFF';
   const textColor = '#000000';
   const mutedTextColor = '#71717a';
 
-  const [password, setPassword] = useState('');
+  const [password,        setPassword]        = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
-  const [showPassword, setShowPassword] = useState(false);
+  const [showPassword,        setShowPassword]        = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  // Field error states
-  const [passwordError, setPasswordError] = useState('');
+  const [passwordError,        setPasswordError]        = useState('');
   const [confirmPasswordError, setConfirmPasswordError] = useState('');
 
   const handleResetPassword = () => {
@@ -50,7 +49,6 @@ export default function ResetPasswordScreen() {
 
     setLoading(true);
 
-    // Simulate password updates
     setTimeout(() => {
       setLoading(false);
       alert('Your password has been successfully updated!');
@@ -69,6 +67,7 @@ export default function ResetPasswordScreen() {
       keyboardShouldPersistTaps="handled"
     >
       <View style={styles.container}>
+
         {/* Top Section */}
         <View style={styles.topSection}>
           <TouchableOpacity onPress={handleBack} style={styles.backButton}>
@@ -103,11 +102,7 @@ export default function ResetPasswordScreen() {
                   onPress={() => setShowPassword(!showPassword)}
                   style={styles.toggleButton}
                 >
-                  <Icon
-                    name={showPassword ? EyeOff : Eye}
-                    color={mutedTextColor}
-                    size={20}
-                  />
+                  <Icon name={showPassword ? EyeOff : Eye} color={mutedTextColor} size={20} />
                 </TouchableOpacity>
               }
             />
@@ -128,29 +123,22 @@ export default function ResetPasswordScreen() {
                   onPress={() => setShowConfirmPassword(!showConfirmPassword)}
                   style={styles.toggleButton}
                 >
-                  <Icon
-                    name={showConfirmPassword ? EyeOff : Eye}
-                    color={mutedTextColor}
-                    size={20}
-                  />
+                  <Icon name={showConfirmPassword ? EyeOff : Eye} color={mutedTextColor} size={20} />
                 </TouchableOpacity>
               }
             />
-
-            <Button
-              variant="default"
-              size="lg"
+            <GameButton
               onPress={handleResetPassword}
               loading={loading}
-              style={styles.resetButton}
-              textStyle={styles.resetButtonText}
-            >
-              Update Password
-            </Button>
+              label="Update Password"
+              color="#00d5ff"
+              width={360}
+              height={55}
+              borderRadius={30}
+            />
           </View>
         </View>
 
-        {/* Bottom spacer for keyboard avoidance */}
         <AvoidKeyboard offset={20} />
       </View>
     </ScrollView>
@@ -174,14 +162,6 @@ const styles = StyleSheet.create({
     width: '100%',
     alignItems: 'center',
     marginBottom: 40,
-  },
-  topLabel: {
-    fontSize: 14,
-    fontWeight: '700',
-    letterSpacing: 1,
-    color: '#71717a',
-    marginBottom: 16,
-    textTransform: 'uppercase',
   },
   backButton: {
     alignSelf: 'flex-start',
@@ -227,20 +207,5 @@ const styles = StyleSheet.create({
   },
   toggleButton: {
     padding: 8,
-  },
-  resetButton: {
-    width: 360,
-    height: 55,
-    borderRadius: 30,
-    backgroundColor: '#00d5ff',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginTop: 10,
-  },
-  resetButtonText: {
-    color: '#FFFFFF',
-    fontWeight: '600',
-    fontSize: 16,
-    textAlign: 'center',
   },
 });
