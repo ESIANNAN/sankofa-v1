@@ -9,6 +9,7 @@ import { AvoidKeyboard } from '@/components/ui/avoid-keyboard';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { ChevronLeft } from 'lucide-react-native';
 import { Icon } from '@/components/ui/icon';
+import { GameButton } from '@/components/ui/game-button';
 
 interface LevelOption {
   id: string;
@@ -26,7 +27,7 @@ const ONBOARDING_LEVELS: LevelOption[] = [
 
 export default function LevelSelectionScreen() {
   const insets = useSafeAreaInsets();
-  const backgroundColor = '#FFFFFF'; // Clean white background as requested
+  const backgroundColor = '#FFFFFF';
   const textColor = '#000000';
   const mutedTextColor = '#71717a';
 
@@ -44,7 +45,6 @@ export default function LevelSelectionScreen() {
       // Save selected experience level in AsyncStorage
       await AsyncStorage.setItem('user_experience_level', selectedLevel);
 
-      // Navigate to the Onboarding Summary Screen
       router.push('/onboarding/summary' as any);
     } catch (error) {
       console.warn('Error saving experience level selection:', error);
@@ -138,18 +138,16 @@ export default function LevelSelectionScreen() {
 
       {/* Footer Actions */}
       <View style={styles.footer}>
-        <Button
-          variant="default"
-          size="lg"
+        <GameButton
           onPress={handleContinue}
           loading={loading}
-          style={styles.ctaButton}
+          label="Continue"
+          color="#00d5ff"
+          width="100%"
+          height={55}
+          borderRadius={28}
           disabled={!selectedLevel || loading}
-        >
-          <Text style={styles.ctaButtonText}>
-            Continue
-          </Text>
-        </Button>
+        />
       </View>
 
       <AvoidKeyboard offset={20} />

@@ -9,6 +9,7 @@ import { AvoidKeyboard } from '@/components/ui/avoid-keyboard';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { ChevronLeft } from 'lucide-react-native';
 import { Icon } from '@/components/ui/icon';
+import { GameButton } from '@/components/ui/game-button';
 
 interface GoalOption {
   id: string;
@@ -26,7 +27,7 @@ const ONBOARDING_GOALS: GoalOption[] = [
 
 export default function DailyGoalSelectionScreen() {
   const insets = useSafeAreaInsets();
-  const backgroundColor = '#FFFFFF'; // Clean white background as requested
+  const backgroundColor = '#FFFFFF';
   const textColor = '#000000';
   const mutedTextColor = '#71717a';
 
@@ -142,18 +143,16 @@ export default function DailyGoalSelectionScreen() {
 
       {/* Footer Actions */}
       <View style={styles.footer}>
-        <Button
-          variant="default"
-          size="lg"
+        <GameButton
           onPress={handleContinue}
           loading={loading}
-          style={styles.ctaButton}
+          label="Continue"
+          color="#00d5ff"
+          width="100%"
+          height={55}
+          borderRadius={28}
           disabled={!selectedGoal || loading}
-        >
-          <Text style={styles.ctaButtonText}>
-            Continue
-          </Text>
-        </Button>
+        />
       </View>
 
       <AvoidKeyboard offset={20} />

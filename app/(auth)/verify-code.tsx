@@ -117,7 +117,6 @@ export default function VerifyCodeScreen() {
               onComplete={(val) => handleVerify(val)}
             />
 
-            {/* 👇 GameButton replaces Button */}
             <GameButton
               onPress={() => handleVerify()}
               loading={loading}
@@ -226,7 +225,6 @@ const styles = StyleSheet.create({
     borderColor: '#E4E4E7',
     backgroundColor: '#FFFFFF',
   },
-  // continueButton and continueButtonText removed — handled by GameButton
   resendSection: {
     flexDirection: 'row',
     alignItems: 'center',

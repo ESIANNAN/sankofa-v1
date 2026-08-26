@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { StyleSheet, Platform, Alert } from 'react-native';
 import { router } from 'expo-router';
-import { Button } from '@/components/ui/button';
 import { Text } from '@/components/ui/text';
 import { View } from '@/components/ui/view';
 import { useColor } from '@/hooks/useColor';
@@ -9,6 +8,7 @@ import { CheckCircle2 } from 'lucide-react-native';
 import { Icon } from '@/components/ui/icon';
 import { auth } from '@/services/firebase';
 import { sendEmailVerification } from 'firebase/auth';
+import { GameButton } from '@/components/ui/game-button'; // 👈 added
 
 export default function ConfirmationScreen() {
   const backgroundColor = useColor('background');
@@ -29,11 +29,8 @@ export default function ConfirmationScreen() {
 
     setVerifying(true);
     try {
-      // Reload the Firebase user to sync verification status 
       await user.reload();
-
       if (auth.currentUser?.emailVerified) {
-        // Navigate to Language Selection onboarding 
         router.replace('/onboarding' as any);
       } else {
         Alert.alert('Not Verified', "Your email hasn't been verified yet.");
@@ -67,7 +64,7 @@ export default function ConfirmationScreen() {
 
   return (
     <View style={[styles.container, { backgroundColor }]}>
-      {/* Centered Content Section */}
+
       <View style={styles.content}>
         {/* Success Icon */}
         <View style={[styles.iconContainer, { backgroundColor: greenColor + '15' }]}>
@@ -84,45 +81,25 @@ export default function ConfirmationScreen() {
 
       {/* Action Footer */}
       <View style={styles.footer}>
-        <Button
-          variant="default"
-          size="lg"
+
+        {/*  I've Verified My Email */}
+        <GameButton
           onPress={handleVerifiedCheck}
           loading={verifying}
-          style={styles.continueButton}
-        >
-          <Text
-            style={{
-              width: '100%',
-              textAlign: 'center',
-              color: '#FFFFFF',
-              fontSize: 16,
-              fontWeight: '600',
-            }}
-          >
-            I've Verified My Email
-          </Text>
-        </Button>
+          label="I've Verified My Email"
+          color="#00d5ff"
+          borderRadius={30}
+        />
 
-        <Button
-          variant="outline"
-          size="lg"
+        {/* Resend Email */}
+        <GameButton
           onPress={handleResendEmail}
           loading={resending}
-          style={styles.resendButton}
-        >
-          <Text
-            style={{
-              width: '100%',
-              textAlign: 'center',
-              color: textColor,
-              fontSize: 16,
-              fontWeight: '600',
-            }}
-          >
-            Resend Email
-          </Text>
-        </Button>
+          label="Resend Email"
+          color="#70e000"
+          borderRadius={30}
+        />
+
       </View>
     </View>
   );
@@ -169,18 +146,5 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: 12,
   },
-  continueButton: {
-    width: '100%',
-    height: 56,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  resendButton: {
-    width: '100%',
-    height: 56,
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderColor: '#E4E4E7',
-    borderWidth: 1.5,
-  },
-}); 
+
+});

@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
-import { StyleSheet, Image, TouchableOpacity } from 'react-native';
+import { StyleSheet, TouchableOpacity } from 'react-native';
 import { router } from 'expo-router';
-import { Button } from '@/components/ui/button';
 import { Text } from '@/components/ui/text';
 import { View } from '@/components/ui/view';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -9,6 +8,7 @@ import { AvoidKeyboard } from '@/components/ui/avoid-keyboard';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { ChevronLeft } from 'lucide-react-native';
 import { Icon } from '@/components/ui/icon';
+import { GameButton } from '@/components/ui/game-button';
 
 interface PurposeOption {
   id: string;
@@ -26,7 +26,7 @@ const ONBOARDING_PURPOSES: PurposeOption[] = [
 
 export default function PurposeSelectionScreen() {
   const insets = useSafeAreaInsets();
-  const backgroundColor = '#FFFFFF'; // Clean white background as requested
+  const backgroundColor = '#FFFFFF';
   const textColor = '#000000';
   const mutedTextColor = '#71717a';
 
@@ -38,26 +38,19 @@ export default function PurposeSelectionScreen() {
       alert('Please select a learning goal to continue.');
       return;
     }
-
     setLoading(true);
     try {
-      // Save selected purpose in AsyncStorage
       await AsyncStorage.setItem('user_learning_purpose', selectedPurpose);
-
-      // Navigate to the Daily Goal Screen
       router.push('/onboarding/daily-goal' as any);
     } catch (error) {
       console.warn('Error saving learning purpose selection:', error);
-      // Fallback transition
       router.push('/onboarding/daily-goal' as any);
     } finally {
       setLoading(false);
     }
   };
 
-  const handleBack = () => {
-    router.replace('/onboarding' as any);
-  };
+  const handleBack = () => router.replace('/onboarding' as any);
 
   return (
     <View
@@ -70,7 +63,7 @@ export default function PurposeSelectionScreen() {
         },
       ]}
     >
-      {/* Top Section: Header & Progress */}
+      {/* Top Section */}
       <View style={styles.topSection}>
         <View style={styles.header}>
           <TouchableOpacity onPress={handleBack} style={styles.backButton}>
@@ -78,7 +71,6 @@ export default function PurposeSelectionScreen() {
           </TouchableOpacity>
           <Text style={styles.logoLabel}>Purpose</Text>
         </View>
-
         <View style={styles.progressContainer}>
           <View style={styles.progressBarBackground}>
             <View style={[styles.progressBarFill, { width: '40%' }]} />
@@ -87,16 +79,9 @@ export default function PurposeSelectionScreen() {
         </View>
       </View>
 
-      {/* Middle Section: Hero & Question */}
+      {/* Middle Section */}
       <View style={styles.middleSection}>
-        <View style={styles.heroContainer}>
-          {/* <Image
-            source={require('@/assets/images/purpose-hero.png')}
-            style={styles.heroImage}
-            resizeMode="contain"
-          /> */}
-        </View>
-
+        <View style={styles.heroContainer} />
         <View style={styles.questionSection}>
           <Text variant="heading" style={[styles.title, { color: textColor }]}>
             What{"'"}s your learning goal?
@@ -107,7 +92,7 @@ export default function PurposeSelectionScreen() {
         </View>
       </View>
 
-      {/* Purpose Options Grid */}
+      {/* Purpose Options */}
       <View style={styles.optionsContainer}>
         {ONBOARDING_PURPOSES.map((option) => {
           const isSelected = selectedPurpose === option.id;
@@ -140,20 +125,18 @@ export default function PurposeSelectionScreen() {
         })}
       </View>
 
-      {/* Footer Actions */}
+      {/* Footer */}
       <View style={styles.footer}>
-        <Button
-          variant="default"
-          size="lg"
+        <GameButton
           onPress={handleContinue}
           loading={loading}
-          style={styles.ctaButton}
+          label="Continue"
+          color="#00d5ff"
+          width="100%"
+          height={55}
+          borderRadius={28}
           disabled={!selectedPurpose || loading}
-        >
-          <Text style={styles.ctaButtonText}>
-            Continue
-          </Text>
-        </Button>
+        />
       </View>
 
       <AvoidKeyboard offset={20} />
@@ -211,11 +194,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     marginVertical: 8,
     flexShrink: 1,
-  },
-  heroImage: {
-    width: '100%',
-    height: '100%',
-    maxWidth: 280,
   },
   questionSection: {
     width: '100%',
@@ -282,24 +260,6 @@ const styles = StyleSheet.create({
     width: '100%',
     alignItems: 'center',
     paddingBottom: 8,
-  },
-
-  ctaButton: {
-    width: '100%',
-    maxWidth: 350,
-    height: 55,
-    borderRadius: 28,
-    backgroundColor: '#000000',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-
-  ctaButtonText: {
-    width: '100%',
-    color: '#FFFFFF',
-    fontWeight: '600',
-    fontSize: 16,
-    textAlign: 'center',
   },
   progressContainer: {
     width: '100%',

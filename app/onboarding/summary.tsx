@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, Image, TouchableOpacity } from 'react-native';
+import { StyleSheet, TouchableOpacity } from 'react-native';
 import { router } from 'expo-router';
-import { Button } from '@/components/ui/button';
 import { Text } from '@/components/ui/text';
 import { View } from '@/components/ui/view';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -9,6 +8,7 @@ import { AvoidKeyboard } from '@/components/ui/avoid-keyboard';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { ChevronLeft } from 'lucide-react-native';
 import { Icon } from '@/components/ui/icon';
+import { GameButton } from '@/components/ui/game-button';
 
 interface SummaryOption {
   label: string;
@@ -34,28 +34,24 @@ export default function OnboardingSummaryScreen() {
         const goal = await AsyncStorage.getItem('user_daily_goal');
         const level = await AsyncStorage.getItem('user_experience_level');
 
-        // Resolve display values
         const langMap: Record<string, string> = {
           asante_twi: 'Asante Twi',
           fante: 'Fante',
           ga: 'Ga',
           ewe: 'Ewe',
         };
-
         const purposeMap: Record<string, string> = {
           travel: 'Travel',
           work: 'Work',
           school: 'School',
           friends_family: 'Friends & Family',
         };
-
         const goalMap: Record<string, string> = {
           relaxed: '5 minutes/day',
           steady: '10 minutes/day',
           committed: '15 minutes/day',
           dedicated: '20 minutes/day',
         };
-
         const levelMap: Record<string, string> = {
           beginner: 'Beginner',
           explorer: 'Explorer',
@@ -64,46 +60,22 @@ export default function OnboardingSummaryScreen() {
         };
 
         setSelections([
-          {
-            label: 'Language',
-            value: langMap[lang || ''] || 'Asante Twi',
-            iconEmoji: '🇬🇭',
-            route: '/onboarding',
-          },
-          {
-            label: 'Goal',
-            value: purposeMap[purpose || ''] || 'Travel',
-            iconEmoji: '🎯',
-            route: '/onboarding/purpose',
-          },
-          {
-            label: 'Level',
-            value: levelMap[level || ''] || 'Beginner',
-            iconEmoji: '🌱',
-            route: '/onboarding/level-selection',
-          },
-          {
-            label: 'Daily Goal',
-            value: goalMap[goal || ''] || '10 minutes/day',
-            iconEmoji: '⏱️',
-            route: '/onboarding/daily-goal',
-          },
+          { label: 'Language', value: langMap[lang || ''] || 'Asante Twi', iconEmoji: '🇬🇭', route: '/onboarding' },
+          { label: 'Goal', value: purposeMap[purpose || ''] || 'Travel', iconEmoji: '🎯', route: '/onboarding/purpose' },
+          { label: 'Level', value: levelMap[level || ''] || 'Beginner', iconEmoji: '🌱', route: '/onboarding/level-selection' },
+          { label: 'Daily Goal', value: goalMap[goal || ''] || '10 minutes/day', iconEmoji: '⏱️', route: '/onboarding/daily-goal' },
         ]);
       } catch (error) {
         console.warn('Error loading preferences summary:', error);
       }
     };
-
     fetchSelections();
   }, []);
 
   const handleStartLearning = async () => {
     setLoading(true);
     try {
-      // Store user preferences completion state
       await AsyncStorage.setItem('onboarding_completed', 'true');
-
-      // Navigate to the main application Home screen
       router.replace('/home' as any);
     } catch (error) {
       console.warn('Error saving preferences completion:', error);
@@ -113,13 +85,8 @@ export default function OnboardingSummaryScreen() {
     }
   };
 
-  const handleEditPreference = (routePath: string) => {
-    router.push(routePath as any);
-  };
-
-  const handleBack = () => {
-    router.replace('/onboarding/level-selection' as any);
-  };
+  const handleEditPreference = (routePath: string) => router.push(routePath as any);
+  const handleBack = () => router.replace('/onboarding/level-selection' as any);
 
   return (
     <View
@@ -132,7 +99,7 @@ export default function OnboardingSummaryScreen() {
         },
       ]}
     >
-      {/* Top Section: Header & Progress */}
+      {/* Top Section */}
       <View style={styles.topSection}>
         <View style={styles.header}>
           <TouchableOpacity onPress={handleBack} style={styles.backButton}>
@@ -140,7 +107,6 @@ export default function OnboardingSummaryScreen() {
           </TouchableOpacity>
           <Text style={styles.logoLabel}>{"You're All Set!"}</Text>
         </View>
-
         <View style={styles.progressContainer}>
           <View style={styles.progressBarBackground}>
             <View style={[styles.progressBarFill, { width: '100%' }]} />
@@ -149,23 +115,17 @@ export default function OnboardingSummaryScreen() {
         </View>
       </View>
 
-      {/* Middle Section: Hero & Question */}
+      {/* Middle Section */}
       <View style={styles.middleSection}>
-        <View style={styles.heroContainer}>
-          {/* <Image
-            source={require('@/assets/images/success-hero.png')}
-            style={styles.heroImage}
-            resizeMode="contain"
-          /> */}
-        </View>
-
+        <View style={styles.heroContainer} />
         <View style={styles.messageSection}>
           <Text variant="heading" style={[styles.title, { color: textColor }]}>
-            You’re all set!          </Text>
+            You're all set!
+          </Text>
         </View>
       </View>
 
-      {/* Selected Preferences Summary Cards */}
+      {/* Summary Cards */}
       <View style={styles.summaryContainer}>
         {selections.map((item, index) => (
           <TouchableOpacity
@@ -189,19 +149,17 @@ export default function OnboardingSummaryScreen() {
         ))}
       </View>
 
-      {/* Footer Action Button */}
+      {/* Footer */}
       <View style={styles.footer}>
-        <Button
-          variant="default"
-          size="lg"
+        <GameButton
           onPress={handleStartLearning}
           loading={loading}
-          style={styles.ctaButton}
-        >
-          <Text style={styles.ctaButtonText}>
-            Start Learning
-          </Text>
-        </Button>
+          label="Start Learning "
+          color="#70e000"
+          width="100%"
+          height={55}
+          borderRadius={28}
+        />
       </View>
 
       <AvoidKeyboard offset={20} />
@@ -260,11 +218,6 @@ const styles = StyleSheet.create({
     marginVertical: 8,
     flexShrink: 1,
   },
-  heroImage: {
-    width: '100%',
-    height: '100%',
-    maxWidth: 280,
-  },
   messageSection: {
     width: '100%',
     alignItems: 'center',
@@ -304,9 +257,7 @@ const styles = StyleSheet.create({
     gap: 14,
     flex: 1,
   },
-  cardIcon: {
-    fontSize: 24,
-  },
+  cardIcon: { fontSize: 24 },
   cardLabel: {
     fontSize: 11,
     fontWeight: '500',
@@ -322,24 +273,6 @@ const styles = StyleSheet.create({
     width: '100%',
     alignItems: 'center',
     paddingBottom: 8,
-  },
-
-  ctaButton: {
-    width: '100%',
-    maxWidth: 350,
-    height: 55,
-    borderRadius: 28,
-    backgroundColor: '#000000',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-
-  ctaButtonText: {
-    width: '100%',
-    color: '#FFFFFF',
-    fontWeight: '600',
-    fontSize: 16,
-    textAlign: 'center',
   },
   progressContainer: {
     width: '100%',

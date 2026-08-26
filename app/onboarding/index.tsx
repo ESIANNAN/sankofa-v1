@@ -1,14 +1,12 @@
 import React, { useState } from 'react';
-import { StyleSheet, Image, TouchableOpacity } from 'react-native';
+import { StyleSheet, TouchableOpacity } from 'react-native';
 import { router } from 'expo-router';
-import { Button } from '@/components/ui/button';
 import { Text } from '@/components/ui/text';
 import { View } from '@/components/ui/view';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { AvoidKeyboard } from '@/components/ui/avoid-keyboard';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { ChevronLeft } from 'lucide-react-native';
-import { Icon } from '@/components/ui/icon';
+import { GameButton } from '@/components/ui/game-button';
 
 interface LanguageOption {
   id: string;
@@ -26,16 +24,12 @@ const ONBOARDING_LANGUAGES: LanguageOption[] = [
 
 export default function LanguageSelectionScreen() {
   const insets = useSafeAreaInsets();
-  const backgroundColor = '#FFFFFF'; // Clean white background
+  const backgroundColor = '#FFFFFF';
   const textColor = '#000000';
   const mutedTextColor = '#71717a';
 
   const [selectedLanguage, setSelectedLanguage] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
-
-  const handleBack = () => {
-    router.replace('/verified-success' as any);
-  };
 
   const handleContinue = async () => {
     if (!selectedLanguage) {
@@ -45,14 +39,10 @@ export default function LanguageSelectionScreen() {
 
     setLoading(true);
     try {
-      // Save selected language locally in AsyncStorage
       await AsyncStorage.setItem('user_selected_language', selectedLanguage);
-
-      // Navigate to the Purpose Selection Screen
       router.push('/onboarding/purpose' as any);
     } catch (error) {
       console.warn('Error saving language selection:', error);
-      // Fallback transition
       router.push('/onboarding/purpose' as any);
     } finally {
       setLoading(false);
@@ -70,15 +60,11 @@ export default function LanguageSelectionScreen() {
         },
       ]}
     >
-      {/* Top Section: Header & Progress */}
+      {/* Top Section */}
       <View style={styles.topSection}>
         <View style={styles.header}>
-          <TouchableOpacity onPress={handleBack} style={styles.backButton}>
-            <Icon name={ChevronLeft} color={textColor} size={24} />
-          </TouchableOpacity>
           <Text style={styles.logoLabel}>Language Selection</Text>
         </View>
-
         <View style={styles.progressContainer}>
           <View style={styles.progressBarBackground}>
             <View style={[styles.progressBarFill, { width: '20%' }]} />
@@ -87,16 +73,9 @@ export default function LanguageSelectionScreen() {
         </View>
       </View>
 
-      {/* Middle Section: Hero & Question */}
+      {/* Middle Section */}
       <View style={styles.middleSection}>
-        <View style={styles.heroContainer}>
-          {/* <Image
-            source={require('@/assets/images/learning-hero.png')}
-            style={styles.heroImage}
-            resizeMode="contain"
-          /> */}
-        </View>
-
+        <View style={styles.heroContainer} />
         <View style={styles.questionSection}>
           <Text variant="heading" style={[styles.title, { color: textColor }]}>
             Which language will you learn?
@@ -121,7 +100,6 @@ export default function LanguageSelectionScreen() {
                 isSelected ? styles.selectedCard : styles.unselectedCard,
               ]}
             >
-              {/* <Text style={styles.cardIcon}>{lang.flagEmoji}</Text> */}
               <Text
                 style={[
                   styles.languageName,
@@ -136,20 +114,18 @@ export default function LanguageSelectionScreen() {
         })}
       </View>
 
-      {/* Footer Actions */}
+      {/* Footer */}
       <View style={styles.footer}>
-        <Button
-          variant="default"
-          size="lg"
+        <GameButton
           onPress={handleContinue}
           loading={loading}
-          style={styles.ctaButton}
+          label="Continue"
+          color="#00d5ff"
+          width="100%"
+          height={55}
+          borderRadius={28}
           disabled={!selectedLanguage || loading}
-        >
-          <Text style={styles.ctaButtonText}>
-            Continue
-          </Text>
-        </Button>
+        />
       </View>
 
       <AvoidKeyboard offset={20} />
@@ -177,16 +153,6 @@ const styles = StyleSheet.create({
     height: 40,
     position: 'relative',
   },
-  backButton: {
-    position: 'absolute',
-    left: 0,
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#F2F2F7',
-  },
   logoLabel: {
     fontSize: 14,
     fontWeight: '700',
@@ -207,11 +173,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     marginVertical: 8,
     flexShrink: 1,
-  },
-  heroImage: {
-    width: '100%',
-    height: '100%',
-    maxWidth: 280,
   },
   questionSection: {
     width: '100%',
@@ -258,10 +219,6 @@ const styles = StyleSheet.create({
     borderColor: '#000000',
     backgroundColor: '#FAF9F6',
   },
-  cardIcon: {
-    fontSize: 28,
-    marginBottom: 6,
-  },
   languageName: {
     fontSize: 15,
     textAlign: 'center',
@@ -277,24 +234,6 @@ const styles = StyleSheet.create({
     width: '100%',
     alignItems: 'center',
     paddingBottom: 8,
-  },
-
-  ctaButton: {
-    width: '100%',
-    maxWidth: 350,
-    height: 55,
-    borderRadius: 28,
-    backgroundColor: '#000000',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-
-  ctaButtonText: {
-    width: '100%',
-    color: '#FFFFFF',
-    fontSize: 16,
-    fontWeight: '600',
-    textAlign: 'center',
   },
   progressContainer: {
     width: '100%',

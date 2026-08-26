@@ -89,7 +89,6 @@ export default function SettingsScreen() {
       const { signOut } = await import('firebase/auth');
       await signOut(auth);
 
-      // Clear selective user session and preferences cache from AsyncStorage, but keep onboarding_completed
       const keysToRemove = [
         'user_name',
         'user_email',
