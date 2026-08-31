@@ -8,6 +8,7 @@ import { Icon } from '@/components/ui/icon';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { auth } from '@/services/firebase';
+import { GameButton } from '@/components/ui/game-button';
 import {
   ChevronLeft,
   User,
@@ -27,7 +28,7 @@ export default function SettingsScreen() {
   const [notificationsEnabled, setNotificationsEnabled] = useState(true);
   const [darkModeEnabled, setDarkModeEnabled] = useState(false);
   const [activeLanguage, setActiveLanguage] = useState('Asante Twi');
-
+  const [loading, setLoading] = useState(false);
   useEffect(() => {
     // Load preferences on mount
     const loadPreferences = async () => {
@@ -84,8 +85,9 @@ export default function SettingsScreen() {
   };
 
   const handleLogout = async () => {
+    setLoading(true);
+
     try {
-      // Sign out Firebase Authentication using signOut(auth)
       const { signOut } = await import('firebase/auth');
       await signOut(auth);
 
@@ -98,16 +100,19 @@ export default function SettingsScreen() {
         'user_selected_language',
         'user_learning_purpose',
         'user_daily_goal',
-        'user_experience_level'
+        'user_experience_level',
       ];
-      await Promise.all(keysToRemove.map(key => AsyncStorage.removeItem(key)));
 
-      // Navigate to Login Screen
+      await Promise.all(
+        keysToRemove.map(key => AsyncStorage.removeItem(key))
+      );
+
       router.replace('/login' as any);
     } catch (error) {
       console.warn('Error during logout:', error);
-      // Fallback transition
       router.replace('/login' as any);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -242,14 +247,18 @@ export default function SettingsScreen() {
           </TouchableOpacity>
         </Card>
 
-        {/* Logout Button */}
-        <TouchableOpacity
-          style={styles.logoutButton}
-          onPress={handleLogout}
-          activeOpacity={0.8}
-        >
-          <Text style={styles.logoutText}>Logout</Text>
-        </TouchableOpacity>
+
+        <View style={styles.logoutContainer}>
+          <GameButton
+            onPress={handleLogout}
+            loading={loading}
+            label="Logout"
+            color="#ff4433"
+            width={'100%'}
+            height={55}
+            borderRadius={30}
+          />
+        </View>
       </ScrollView>
     </View>
   );
@@ -342,18 +351,10 @@ const styles = StyleSheet.create({
     height: 1,
     backgroundColor: '#E5E5E5',
   },
-  logoutButton: {
-    backgroundColor: '#ff4433',
-    height: 52,
-    borderRadius: 26,
-    justifyContent: 'center',
+  logoutContainer: {
+    width: '100%',
     alignItems: 'center',
-    marginTop: 36,
-    marginBottom: 48,
-  },
-  logoutText: {
-    color: '#FFFFFF',
-    fontSize: 16,
-    fontWeight: '700',
+    justifyContent: 'center',
+    marginTop: 60,
   },
 });
