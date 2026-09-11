@@ -1,15 +1,16 @@
+
 import React, { useState } from 'react';
-import { StyleSheet, Image, TouchableOpacity } from 'react-native';
+import { StyleSheet, TouchableOpacity } from 'react-native';
 import { router } from 'expo-router';
-import { Button } from '@/components/ui/button';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
 import { Text } from '@/components/ui/text';
 import { View } from '@/components/ui/view';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { AvoidKeyboard } from '@/components/ui/avoid-keyboard';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { ChevronLeft } from 'lucide-react-native';
-import { Icon } from '@/components/ui/icon';
-import { GameButton } from '@/components/ui/game-button';
+
+import { OnboardingLayout } from '@/components/ui/onboarding-layout';
+import { OnboardingHeader } from '@/components/ui/onboarding-header';
+import { OnboardingTitle } from '@/components/ui/onboarding-title';
+import { OnboardingFooter } from '@/components/ui/onboarding-footer';
 
 interface GoalOption {
   id: string;
@@ -19,18 +20,33 @@ interface GoalOption {
 }
 
 const ONBOARDING_GOALS: GoalOption[] = [
-  { id: 'relaxed', title: '5 minutes/day', description: 'Relaxed pace', iconEmoji: '🌱' },
-  { id: 'steady', title: '10 minutes/day', description: 'Steady progress', iconEmoji: '⚡' },
-  { id: 'committed', title: '15 minutes/day', description: 'Committed learner', iconEmoji: '🔥' },
-  { id: 'dedicated', title: '20 minutes/day', description: 'Dedicated learner', iconEmoji: '🏆' },
+  {
+    id: 'relaxed',
+    title: '5 minutes/day',
+    description: 'Relaxed pace',
+    iconEmoji: '🌱',
+  },
+  {
+    id: 'steady',
+    title: '10 minutes/day',
+    description: 'Steady progress',
+    iconEmoji: '⚡',
+  },
+  {
+    id: 'committed',
+    title: '15 minutes/day',
+    description: 'Committed learner',
+    iconEmoji: '🔥',
+  },
+  {
+    id: 'dedicated',
+    title: '20 minutes/day',
+    description: 'Dedicated learner',
+    iconEmoji: '🏆',
+  },
 ];
 
 export default function DailyGoalSelectionScreen() {
-  const insets = useSafeAreaInsets();
-  const backgroundColor = '#FFFFFF';
-  const textColor = '#000000';
-  const mutedTextColor = '#71717a';
-
   const [selectedGoal, setSelectedGoal] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
@@ -41,77 +57,44 @@ export default function DailyGoalSelectionScreen() {
     }
 
     setLoading(true);
-    try {
-      // Save selected daily goal in AsyncStorage
-      await AsyncStorage.setItem('user_daily_goal', selectedGoal);
 
-      // Navigate to the Level Selection Screen
+    try {
+      await AsyncStorage.setItem(
+        'user_daily_goal',
+        selectedGoal
+      );
+
       router.push('/onboarding/level-selection' as any);
     } catch (error) {
       console.warn('Error saving daily goal selection:', error);
-      // Fallback transition
+
       router.push('/onboarding/level-selection' as any);
     } finally {
       setLoading(false);
     }
   };
 
-  const handleBack = () => {
-    router.replace('/onboarding/purpose' as any);
-  };
-
   return (
-    <View
-      style={[
-        styles.container,
-        {
-          backgroundColor,
-          paddingTop: Math.max(insets.top, 16),
-          paddingBottom: Math.max(insets.bottom, 16),
-        },
-      ]}
-    >
-      {/* Top Section: Header & Progress */}
-      <View style={styles.topSection}>
-        <View style={styles.header}>
-          <TouchableOpacity onPress={handleBack} style={styles.backButton}>
-            <Icon name={ChevronLeft} color={textColor} size={24} />
-          </TouchableOpacity>
-          <Text style={styles.logoLabel}>Daily Goal</Text>
-        </View>
+    <OnboardingLayout>
 
-        <View style={styles.progressContainer}>
-          <View style={styles.progressBarBackground}>
-            <View style={[styles.progressBarFill, { width: '60%' }]} />
-          </View>
-          <Text style={[styles.progressText, { color: mutedTextColor }]}>Step 3 of 5</Text>
-        </View>
-      </View>
+      {/* Header + Progress */}
+      <OnboardingHeader
+        title="Daily Goal"
+        step={3}
+        total={5}
+      />
 
-      {/* Middle Section: Hero & Question */}
-      <View style={styles.middleSection}>
-        <View style={styles.heroContainer}>
-          {/* <Image
-            source={require('@/assets/images/goal-hero.png')}
-            style={styles.heroImage}
-            resizeMode="contain"
-          /> */}
-        </View>
+      {/* Question */}
+      <OnboardingTitle
+        heading="Set your daily goal"
+        subtitle="Consistency beats intensity."
+      />
 
-        <View style={styles.questionSection}>
-          <Text variant="heading" style={[styles.title, { color: textColor }]}>
-            Set your daily goal
-          </Text>
-          <Text variant="body" style={[styles.subtitle, { color: mutedTextColor }]}>
-            Consistency beats intensity.
-          </Text>
-        </View>
-      </View>
-
-      {/* Goal Options Grid */}
+      {/* Goal Options */}
       <View style={styles.optionsContainer}>
         {ONBOARDING_GOALS.map((option) => {
           const isSelected = selectedGoal === option.id;
+
           return (
             <TouchableOpacity
               key={option.id}
@@ -119,207 +102,122 @@ export default function DailyGoalSelectionScreen() {
               activeOpacity={0.8}
               style={[
                 styles.optionCard,
-                isSelected ? styles.selectedCard : styles.unselectedCard,
+                isSelected
+                  ? styles.selectedCard
+                  : styles.unselectedCard,
               ]}
             >
-              <View style={styles.cardLeft}>
-                <Text style={styles.cardIcon}>{option.iconEmoji}</Text>
-                <View style={{ flex: 1 }}>
-                  <Text
-                    style={[
-                      styles.optionTitle,
-                      { color: textColor, fontWeight: isSelected ? '700' : '600' },
-                    ]}
-                  >
-                    {option.title}
-                  </Text>
-                  <Text style={styles.optionDescription}>{option.description}</Text>
-                </View>
+              <Text style={styles.cardIcon}>
+                {option.iconEmoji}
+              </Text>
+
+              <View style={styles.cardText}>
+                <Text
+                  style={[
+                    styles.optionTitle,
+                    {
+                      color: isSelected
+                        ? '#16A34A'
+                        : '#000000',
+                      fontWeight: isSelected
+                        ? '700'
+                        : '600',
+                    },
+                  ]}
+                >
+                  {option.title}
+                </Text>
+
+                <Text style={styles.optionDescription}>
+                  {option.description}
+                </Text>
               </View>
+
+              {isSelected && (
+                <View style={styles.checkCircle}>
+                  <Text style={styles.checkText}>✓</Text>
+                </View>
+              )}
             </TouchableOpacity>
           );
         })}
       </View>
 
-      {/* Footer Actions */}
-      <View style={styles.footer}>
-        <GameButton
-          onPress={handleContinue}
-          loading={loading}
-          label="Continue"
-          color="#00d5ff"
-          width="100%"
-          height={55}
-          borderRadius={28}
-          disabled={!selectedGoal || loading}
-        />
-      </View>
+      {/* Continue Button */}
+      <OnboardingFooter
+        onPress={handleContinue}
+        loading={loading}
+        disabled={!selectedGoal || loading}
+      />
 
-      <AvoidKeyboard offset={20} />
-    </View>
+    </OnboardingLayout>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    paddingHorizontal: 24,
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  topSection: {
-    width: '100%',
-    alignItems: 'center',
-    gap: 4,
-  },
-  header: {
-    width: '100%',
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    height: 40,
-    position: 'relative',
-  },
-  logoLabel: {
-    fontSize: 14,
-    fontWeight: '700',
-    letterSpacing: 1.5,
-    color: '#71717a',
-    textTransform: 'uppercase',
-  },
-  backButton: {
-    position: 'absolute',
-    left: 0,
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#F2F2F7',
-  },
-  middleSection: {
-    width: '100%',
-    alignItems: 'center',
-    flexShrink: 1,
-  },
-  heroContainer: {
-    width: '100%',
-    height: 120,
-    maxHeight: 140,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginVertical: 8,
-    flexShrink: 1,
-  },
-  heroImage: {
-    width: '100%',
-    height: '100%',
-    maxWidth: 280,
-  },
-  questionSection: {
-    width: '100%',
-    alignItems: 'center',
-    marginTop: 4,
-    marginBottom: 8,
-  },
-  title: {
-    fontSize: 22,
-    fontWeight: '800',
-    letterSpacing: -0.5,
-    marginBottom: 4,
-    textAlign: 'center',
-  },
-  subtitle: {
-    fontSize: 14,
-    textAlign: 'center',
-    maxWidth: 320,
-    lineHeight: 18,
-  },
   optionsContainer: {
     width: '100%',
-    gap: 8,
-    alignItems: 'center',
-    marginVertical: 8,
+    gap: 10,
   },
+
   optionCard: {
     width: '100%',
-    maxWidth: 350,
+    minHeight: 76,
     paddingVertical: 12,
     paddingHorizontal: 16,
     borderRadius: 15,
     borderWidth: 1.5,
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#FFFFFF',
   },
+
   unselectedCard: {
+    backgroundColor: '#FFFFFF',
     borderColor: '#E4E4E7',
   },
+
   selectedCard: {
-    borderColor: '#000000',
-    backgroundColor: '#FAF9F6',
+    backgroundColor: '#DCFCE7',
+    borderColor: '#16A34A',
+    borderWidth: 2,
   },
-  cardLeft: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 14,
-    flex: 1,
-  },
+
   cardIcon: {
-    fontSize: 24,
-  },
-  optionTitle: {
-    fontSize: 16,
-  },
-  optionDescription: {
-    fontSize: 12,
-    color: '#71717a',
-    marginTop: 2,
-  },
-  footer: {
-    width: '100%',
-    alignItems: 'center',
-    paddingBottom: 8,
-  },
-
-  ctaButton: {
-    width: '100%',
-    maxWidth: 350,
-    height: 55,
-    borderRadius: 28,
-    backgroundColor: '#000000',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-
-  ctaButtonText: {
-    width: '100%',
-    color: '#FFFFFF',
-    fontWeight: '600',
-    fontSize: 16,
+    fontSize: 27,
+    width: 45,
     textAlign: 'center',
   },
-  progressContainer: {
-    width: '100%',
-    maxWidth: 350,
+
+  cardText: {
+    flex: 1,
+    marginLeft: 10,
+  },
+
+  optionTitle: {
+    fontSize: 16,
+    marginBottom: 2,
+  },
+
+  optionDescription: {
+    fontSize: 12,
+    color: '#71717A',
+    lineHeight: 16,
+  },
+
+  checkCircle: {
+    width: 24,
+    height: 24,
+    borderRadius: 12,
+    backgroundColor: '#16A34A',
     alignItems: 'center',
-    gap: 6,
+    justifyContent: 'center',
+    marginLeft: 8,
   },
-  progressBarBackground: {
-    width: '100%',
-    height: 6,
-    borderRadius: 3,
-    backgroundColor: '#E4E4E7',
-    overflow: 'hidden',
-  },
-  progressBarFill: {
-    height: '100%',
-    backgroundColor: '#000000',
-  },
-  progressText: {
-    fontSize: 11,
-    fontWeight: '600',
-    letterSpacing: 0.5,
-    textTransform: 'uppercase',
+
+  checkText: {
+    color: '#FFFFFF',
+    fontSize: 14,
+    fontWeight: '800',
   },
 });
+

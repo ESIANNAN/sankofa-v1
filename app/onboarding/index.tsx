@@ -4,9 +4,10 @@ import { router } from 'expo-router';
 import { Text } from '@/components/ui/text';
 import { View } from '@/components/ui/view';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { AvoidKeyboard } from '@/components/ui/avoid-keyboard';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { GameButton } from '@/components/ui/game-button';
+import { OnboardingLayout } from '@/components/ui/onboarding-layout';
+import { OnboardingHeader } from '@/components/ui/onboarding-header';
+import { OnboardingTitle } from '@/components/ui/onboarding-title';
+import { OnboardingFooter } from '@/components/ui/onboarding-footer';
 
 interface LanguageOption {
   id: string;
@@ -58,9 +59,6 @@ const ONBOARDING_LANGUAGES: LanguageOption[] = [
 ];
 
 export default function LanguageSelectionScreen() {
-  const insets = useSafeAreaInsets();
-  const mutedTextColor = '#71717a';
-
   const [selectedLanguage, setSelectedLanguage] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
@@ -115,30 +113,23 @@ export default function LanguageSelectionScreen() {
   const selectedLang = ONBOARDING_LANGUAGES.find(l => l.id === selectedLanguage);
 
   return (
-    <View
-      style={[
-        styles.container,
-        {
-          paddingTop: Math.max(insets.top, 16),
-          paddingBottom: Math.max(insets.bottom, 16),
-        },
-      ]}
-    >
-      {/* ── Top Section ── */}
-      <Animated.View style={[styles.topSection, { opacity: headerAnim }]}>
-        <View style={styles.progressContainer}>
-          <View style={styles.progressBarBackground}>
-            <View style={styles.progressBarFill} />
-          </View>
-          <Text style={[styles.progressText, { color: mutedTextColor }]}>20% complete</Text>
-        </View>
+    <OnboardingLayout>
+
+      {/* ── Header + progress bar ── */}
+      <Animated.View style={{ width: '100%', opacity: headerAnim }}>
+        <OnboardingHeader
+          title="Language Selection"
+          step={1}
+          total={5}
+        />
       </Animated.View>
 
-      <Animated.View style={[styles.questionSection, { opacity: headerAnim }]}>
-        <Text style={styles.title}>Which language{'\n'}will you learn?</Text>
-        <Text style={styles.subtitle}>
-          Start with one — you can always add more later.
-        </Text>
+      {/* ── Title ── */}
+      <Animated.View style={{ width: '100%', opacity: headerAnim }}>
+        <OnboardingTitle
+          heading={"Which language\nwill you learn?"}
+          subtitle="Start with one — you can always add more later."
+        />
       </Animated.View>
 
       {/* ── Language Cards ── */}
@@ -174,17 +165,12 @@ export default function LanguageSelectionScreen() {
                   },
                 ]}
               >
-                {/* Selected checkmark */}
                 {isSelected && (
                   <View style={[styles.checkBadge, { backgroundColor: lang.color }]}>
                     <Text style={styles.checkText}>✓</Text>
                   </View>
                 )}
-
-                {/* Emoji */}
                 <Text style={styles.cardEmoji}>{lang.emoji}</Text>
-
-                {/* Name */}
                 <Text style={[
                   styles.languageName,
                   {
@@ -194,8 +180,6 @@ export default function LanguageSelectionScreen() {
                 ]}>
                   {lang.name}
                 </Text>
-
-                {/* Description */}
                 <Text style={styles.languageDescription}>
                   {lang.description}
                 </Text>
@@ -221,80 +205,17 @@ export default function LanguageSelectionScreen() {
       )}
 
       {/* ── Footer ── */}
-      <View style={styles.footer}>
-        <GameButton
-          onPress={handleContinue}
-          loading={loading}
-          label="Continue"
-          color="#00d5ff"
-          width="100%"
-          height={55}
-          borderRadius={28}
-          disabled={!selectedLanguage || loading}
-        />
-      </View>
+      <OnboardingFooter
+        onPress={handleContinue}
+        loading={loading}
+        disabled={!selectedLanguage || loading}
+      />
 
-      <AvoidKeyboard offset={20} />
-    </View>
+    </OnboardingLayout>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    paddingHorizontal: 24,
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    backgroundColor: '#FAFAFA',
-  },
-  topSection: {
-    width: '100%',
-    alignItems: 'center',
-  },
-  progressContainer: {
-    width: '100%',
-    alignItems: 'center',
-    gap: 4,
-  },
-  progressBarBackground: {
-    width: '100%',
-    height: 8,
-    borderRadius: 99,
-    backgroundColor: '#E4E4E7',
-    overflow: 'hidden',
-  },
-  progressBarFill: {
-    width: '20%',
-    height: '100%',
-    borderRadius: 99,
-    backgroundColor: '#00d5ff',
-  },
-  progressText: {
-    fontSize: 11,
-    fontWeight: '600',
-    letterSpacing: 0.5,
-    textTransform: 'uppercase',
-  },
-  questionSection: {
-    width: '100%',
-    alignItems: 'center',
-  },
-  title: {
-    fontSize: 26,
-    fontWeight: '900',
-    letterSpacing: -0.5,
-    textAlign: 'center',
-    color: '#111',
-    marginBottom: 6,
-    lineHeight: 32,
-  },
-  subtitle: {
-    fontSize: 14,
-    textAlign: 'center',
-    maxWidth: 300,
-    lineHeight: 20,
-    color: '#71717a',
-  },
   gridContainer: {
     width: '100%',
     flexDirection: 'row',
@@ -314,10 +235,8 @@ const styles = StyleSheet.create({
   },
   checkBadge: {
     position: 'absolute',
-    top: 10,
-    right: 10,
-    width: 22,
-    height: 22,
+    top: 10, right: 10,
+    width: 22, height: 22,
     borderRadius: 99,
     alignItems: 'center',
     justifyContent: 'center',
@@ -353,10 +272,5 @@ const styles = StyleSheet.create({
     fontSize: 13,
     fontWeight: '700',
     textAlign: 'center',
-  },
-  footer: {
-    width: '100%',
-    alignItems: 'center',
-    paddingBottom: 8,
   },
 });
