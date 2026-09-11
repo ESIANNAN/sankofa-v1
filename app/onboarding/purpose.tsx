@@ -77,6 +77,10 @@ export default function PurposeSelectionScreen() {
     }
   };
 
+  const handleBack = () => {
+    router.back();
+  };
+
   return (
     <OnboardingLayout>
 
@@ -85,6 +89,7 @@ export default function PurposeSelectionScreen() {
         title="Purpose"
         step={2}
         total={5}
+        onBack={handleBack}
       />
 
       {/* Question */}

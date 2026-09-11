@@ -137,9 +137,7 @@ export default function OnboardingSummaryScreen() {
   };
 
   const handleBack = () => {
-    router.replace(
-      '/onboarding/level-selection' as any
-    );
+    router.back();
   };
 
   return (

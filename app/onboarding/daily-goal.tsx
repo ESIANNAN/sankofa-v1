@@ -74,6 +74,10 @@ export default function DailyGoalSelectionScreen() {
     }
   };
 
+  const handleBack = () => {
+    router.back();
+  };
+
   return (
     <OnboardingLayout>
 
@@ -82,6 +86,7 @@ export default function DailyGoalSelectionScreen() {
         title="Daily Goal"
         step={3}
         total={5}
+        onBack={handleBack}
       />
 
       {/* Question */}
