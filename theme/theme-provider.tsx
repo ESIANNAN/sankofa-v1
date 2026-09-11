@@ -1,59 +1,23 @@
-import {
-  DarkTheme,
-  DefaultTheme,
-  ThemeProvider as RNThemeProvider,
-} from '@react-navigation/native';
+import React from 'react';
 import { Colors } from '@/theme/colors';
 import { useColorScheme } from '@/hooks/useColorScheme';
+import { View } from 'react-native';
 
 type Props = {
   children: React.ReactNode;
 };
 
 export const ThemeProvider = ({ children }: Props) => {
-  const colorScheme = useColorScheme();
+  const colorScheme = useColorScheme() || 'light';
 
-  // Create custom themes that use your Colors
-  const customLightTheme = {
-    ...DefaultTheme,
-    colors: {
-      ...DefaultTheme.colors,
-      primary: Colors.light.primary,
-      background: Colors.light.background,
-      card: Colors.light.card,
-      text: Colors.light.text,
-      border: Colors.light.border,
-      notification: Colors.light.red,
-
-      tint: Colors.light.background,
-      icon: '#9BA1A6',
-      tabIconDefault: '#9BA1A6',
-      tabIconSelected: Colors.light.background,
-    },
-  };
-
-  const customDarkTheme = {
-    ...DarkTheme,
-    colors: {
-      ...DarkTheme.colors,
-      primary: Colors.dark.primary,
-      background: Colors.dark.background,
-      card: Colors.dark.card,
-      text: Colors.dark.text,
-      border: Colors.dark.border,
-      notification: Colors.dark.red,
-      tint: Colors.dark.background,
-      tabIconSelected: Colors.dark.background,
-      icon: '#9BA1A6',
-      tabIconDefault: '#9BA1A6',
-    },
-  };
+  const backgroundColor =
+    colorScheme === 'dark'
+      ? Colors.dark.background
+      : Colors.light.background;
 
   return (
-    <RNThemeProvider
-      value={colorScheme === 'dark' ? customDarkTheme : customLightTheme}
-    >
+    <View style={{ flex: 1, backgroundColor }}>
       {children}
-    </RNThemeProvider>
+    </View>
   );
 };

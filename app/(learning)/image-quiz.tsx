@@ -23,7 +23,7 @@ import {
   Award,
 } from 'lucide-react-native';
 import * as Haptics from 'expo-haptics';
-import { Audio } from 'expo-av';
+import { useAudioPlayer } from 'expo-audio';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { auth, db, storage } from '@/services/firebase';
 import { ref, getDownloadURL } from 'firebase/storage';
@@ -148,29 +148,17 @@ export default function ImageQuizScreen() {
   const [xpEarned, setXpEarned] = useState(0);
   const [isQuizComplete, setIsQuizComplete] = useState(false);
 
-  // Audio refs
-  const pronunciationSoundRef = useRef<Audio.Sound | null>(null);
-  const feedbackSoundRef = useRef<Audio.Sound | null>(null);
+  // Audio players
+  const pronunciationPlayer = useAudioPlayer(null);
+  const feedbackPlayer = useAudioPlayer(null);
 
   // Reanimated Shared Values
   const speakerScale = useSharedValue(1);
 
-  // Clean up sound resources on unmount
-  useEffect(() => {
-    return () => {
-      if (pronunciationSoundRef.current) {
-        pronunciationSoundRef.current.unloadAsync().catch(() => {});
-      }
-      if (feedbackSoundRef.current) {
-        feedbackSoundRef.current.unloadAsync().catch(() => {});
-      }
-    };
-  }, []);
-
   // Fetch download URL from Firebase Storage with safety fallbacks
   const resolveStorageImage = async (item: Omit<VocabItem, 'id'>): Promise<string> => {
     if (item.imageURL) return item.imageURL;
-    
+
     const storagePath = item.imagePath || `images/${currentCategory}/${item.translation.toLowerCase()}.png`;
     try {
       const imageRef = ref(storage, storagePath);
@@ -253,7 +241,7 @@ export default function ImageQuizScreen() {
 
       for (let i = 0; i < count; i++) {
         const targetWord = resolvedList[i];
-        
+
         // Correct Option
         const correctOption: ImageQuizOption = {
           label: targetWord.translation,
@@ -264,7 +252,7 @@ export default function ImageQuizScreen() {
         // Distractors: Filter out the correct option, shuffle others, and take up to 3
         const potentialDistractors = resolvedList.filter(item => item.id !== targetWord.id);
         const shuffledDistractors = potentialDistractors.sort(() => 0.5 - Math.random());
-        
+
         const distractorOptions: ImageQuizOption[] = shuffledDistractors.slice(0, 3).map(item => ({
           label: item.translation,
           imageUrl: item.resolvedImageUrl,
@@ -321,9 +309,9 @@ export default function ImageQuizScreen() {
   }, [currentCategory, currentLanguage]);
 
   // Audio Playback Helpers
-  const playPronunciation = async (url: string) => {
+  const playPronunciation = (url: string) => {
     if (!url) return;
-    
+
     // Speaker trigger animation
     speakerScale.value = withSequence(
       withSpring(1.2, { damping: 10, stiffness: 300 }),
@@ -331,49 +319,21 @@ export default function ImageQuizScreen() {
     );
 
     try {
-      if (pronunciationSoundRef.current) {
-        await pronunciationSoundRef.current.stopAsync();
-        await pronunciationSoundRef.current.unloadAsync();
-        pronunciationSoundRef.current = null;
-      }
-
-      const { sound } = await Audio.Sound.createAsync(
-        { uri: url },
-        { shouldPlay: true }
-      );
-      pronunciationSoundRef.current = sound;
-
-      sound.setOnPlaybackStatusUpdate((status) => {
-        if (status.isLoaded && status.didJustFinish) {
-          sound.unloadAsync().catch(() => {});
-          pronunciationSoundRef.current = null;
-        }
-      });
+      pronunciationPlayer.replace(url);
+      pronunciationPlayer.play();
     } catch (error) {
-      console.warn('Failed to play audio:', error);
+      console.warn('Failed to play pronunciation:', error);
     }
   };
 
-  const playFeedbackSound = async (isCorrect: boolean) => {
+  const playFeedbackSound = (isCorrect: boolean) => {
     try {
-      if (feedbackSoundRef.current) {
-        await feedbackSoundRef.current.stopAsync();
-        await feedbackSoundRef.current.unloadAsync();
-        feedbackSoundRef.current = null;
-      }
+      const soundUrl = isCorrect
+        ? SUCCESS_SOUND_URL
+        : ERROR_SOUND_URL;
 
-      const { sound } = await Audio.Sound.createAsync(
-        { uri: isCorrect ? SUCCESS_SOUND_URL : ERROR_SOUND_URL },
-        { shouldPlay: true }
-      );
-      feedbackSoundRef.current = sound;
-
-      sound.setOnPlaybackStatusUpdate((status) => {
-        if (status.isLoaded && status.didJustFinish) {
-          sound.unloadAsync().catch(() => {});
-          feedbackSoundRef.current = null;
-        }
-      });
+      feedbackPlayer.replace(soundUrl);
+      feedbackPlayer.play();
     } catch (error) {
       console.warn('Failed to play feedback sound:', error);
     }
@@ -426,7 +386,7 @@ export default function ImageQuizScreen() {
     if (currentQuestionIndex < questions.length - 1) {
       const nextIndex = currentQuestionIndex + 1;
       setCurrentQuestionIndex(nextIndex);
-      
+
       // Auto-play pronunciation for the next question
       if (questions[nextIndex]?.audioURL) {
         setTimeout(() => {
@@ -440,7 +400,7 @@ export default function ImageQuizScreen() {
 
   const handleQuizCompletion = async () => {
     setIsQuizComplete(true);
-    
+
     // Save cumulative stats to local storage and Firestore
     try {
       const storedXP = await AsyncStorage.getItem('user_xp') || '0';
@@ -503,7 +463,7 @@ export default function ImageQuizScreen() {
       <View style={[styles.container, { paddingTop: Math.max(insets.top, 24), paddingBottom: Math.max(insets.bottom, 24) }]}>
         <View style={styles.completionContent}>
           <Text style={styles.trophyEmoji}>🏆</Text>
-          
+
           <Text variant="heading" style={styles.congratsTitle}>Quiz Completed!</Text>
           <Text style={styles.congratsSubtitle}>
             Excellent practice! You are getting closer to mastering {currentLanguage}.
@@ -587,7 +547,7 @@ export default function ImageQuizScreen() {
         {currentQuestion.pronunciation ? (
           <Text style={styles.pronunciationLabel}>[{currentQuestion.pronunciation}]</Text>
         ) : null}
-        
+
         {/* Helper instruction */}
         <Text style={styles.questionInstruction}>Select the correct image</Text>
       </View>
@@ -661,10 +621,10 @@ export default function ImageQuizScreen() {
         {isAnswerChecked ? (
           <View style={[styles.banner, isAnswerCorrect ? styles.bannerCorrect : styles.bannerIncorrect]}>
             <View style={styles.bannerHeader}>
-              <Icon 
-                name={isAnswerCorrect ? CheckCircle2 : XCircle} 
-                color={isAnswerCorrect ? '#15803d' : '#b91c1c'} 
-                size={24} 
+              <Icon
+                name={isAnswerCorrect ? CheckCircle2 : XCircle}
+                color={isAnswerCorrect ? '#15803d' : '#b91c1c'}
+                size={24}
               />
               <Text style={[styles.bannerTitle, { color: isAnswerCorrect ? '#15803d' : '#b91c1c' }]}>
                 {isAnswerCorrect ? 'Correct! Well done.' : 'Incorrect.'}
@@ -675,7 +635,7 @@ export default function ImageQuizScreen() {
                 Correct answer: {currentQuestion.correctAnswerLabel}
               </Text>
             )}
-            
+
             {/* Show Continue button on incorrect answers (correct answers auto-advance) */}
             {!isAnswerCorrect && (
               <Button

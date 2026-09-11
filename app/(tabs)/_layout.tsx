@@ -1,20 +1,15 @@
 import React, { useEffect, useState } from 'react';
-import { Platform, ActivityIndicator, View as RNView } from 'react-native';
+import { ActivityIndicator, View as RNView } from 'react-native';
+import { Icon } from '@/components/ui/icon';
 import { useColor } from '@/hooks/useColor';
-import MaterialIcons from '@expo/vector-icons/Feather';
-import {
-  Icon,
-  Label,
-  NativeTabs,
-  VectorIcon,
-} from 'expo-router/unstable-native-tabs';
+import { Tabs, router } from 'expo-router';
+import { Home, Trophy, Compass, BookOpen, User } from 'lucide-react-native';
 import { auth } from '@/services/firebase';
-import { router } from 'expo-router';
 
 export default function TabsLayout() {
-  const red = useColor('red');
   const primary = useColor('primary');
   const foreground = useColor('foreground');
+  const background = useColor('background');
 
   const [initializing, setInitializing] = useState(true);
   const [user, setUser] = useState(auth.currentUser);
@@ -37,8 +32,8 @@ export default function TabsLayout() {
 
   if (initializing) {
     return (
-      <RNView style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#FFFFFF' }}>
-        <ActivityIndicator size="large" color="#000000" />
+      <RNView style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: background }}>
+        <ActivityIndicator size="large" color={primary} />
       </RNView>
     );
   }
@@ -47,71 +42,73 @@ export default function TabsLayout() {
     return null;
   }
 
-
   return (
-    <NativeTabs
-      minimizeBehavior='onScrollDown'
-      labelStyle={{
-        default: { color: primary },
-        selected: { color: foreground },
+    <Tabs
+      screenOptions={{
+        headerShown: false,
+        tabBarActiveTintColor: primary,
+        tabBarInactiveTintColor: foreground,
+        tabBarStyle: {
+          backgroundColor: background,
+        },
       }}
-      iconColor={{
-        default: primary,
-        selected: foreground,
-      }}
-      badgeBackgroundColor={red}
-      labelVisibilityMode='labeled'
-      disableTransparentOnScrollEdge={true}
     >
-      <NativeTabs.Trigger name='home'>
-        {Platform.select({
-          ios: <Icon sf='house.fill' />,
-          android: (
-            <Icon src={<VectorIcon family={MaterialIcons} name='home' />} />
-          ),
-        })}
-        <Label>Home</Label>
-      </NativeTabs.Trigger>
+      <Tabs.Screen
+        name='index'
+        options={{
+          href: null,
+        }}
+      />
 
-      <NativeTabs.Trigger name='leaderboard'>
-        {Platform.select({
-          ios: <Icon sf='trophy.fill' />,
-          android: (
-            <Icon src={<VectorIcon family={MaterialIcons} name='award' />} />
+      <Tabs.Screen
+        name='home'
+        options={{
+          title: 'Home',
+          tabBarIcon: ({ color }) => (
+            <Icon name={Home} size={24} color={color} />
           ),
-        })}
-        <Label>Leaderboard</Label>
-      </NativeTabs.Trigger>
+        }}
+      />
 
-      <NativeTabs.Trigger name='explore'>
-        {Platform.select({
-          ios: <Icon sf='globe' />,
-          android: (
-            <Icon src={<VectorIcon family={MaterialIcons} name='compass' />} />
+      <Tabs.Screen
+        name='leaderboard'
+        options={{
+          title: 'Leaderboard',
+          tabBarIcon: ({ color }) => (
+            <Icon name={Trophy} size={24} color={color} />
           ),
-        })}
-        <Label>Explore</Label>
-      </NativeTabs.Trigger>
+        }}
+      />
 
-      <NativeTabs.Trigger name='journal'>
-        {Platform.select({
-          ios: <Icon sf='book.closed.fill' />,
-          android: (
-            <Icon src={<VectorIcon family={MaterialIcons} name='book-open' />} />
+      <Tabs.Screen
+        name='explore'
+        options={{
+          title: 'Explore',
+          tabBarIcon: ({ color }) => (
+            <Icon name={Compass} size={24} color={color} />
           ),
-        })}
-        <Label>Journal</Label>
-      </NativeTabs.Trigger>
+        }}
+      />
 
-      <NativeTabs.Trigger name='profile'>
-        {Platform.select({
-          ios: <Icon sf='person.crop.circle.fill' />,
-          android: (
-            <Icon src={<VectorIcon family={MaterialIcons} name='user' />} />
+      <Tabs.Screen
+        name='journal'
+        options={{
+          title: 'Journal',
+          tabBarIcon: ({ color }) => (
+            <Icon name={BookOpen} size={24} color={color} />
           ),
-        })}
-        <Label>Profile</Label>
-      </NativeTabs.Trigger>
-    </NativeTabs>
+        }}
+      />
+
+      <Tabs.Screen
+        name='profile'
+        options={{
+          title: 'Profile',
+          tabBarIcon: ({ color }) => (
+            <Icon name={User} size={24} color={color} />
+          ),
+        }}
+      />
+    </Tabs>
   );
 }

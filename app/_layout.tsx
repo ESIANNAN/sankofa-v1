@@ -3,7 +3,6 @@ import { Colors } from '@/theme/colors';
 import { ThemeProvider } from '@/theme/theme-provider';
 import { osName } from 'expo-device';
 import { isLiquidGlassAvailable } from 'expo-glass-effect';
-import * as NavigationBar from 'expo-navigation-bar';
 import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
@@ -20,14 +19,6 @@ SplashScreen.setOptions({
 
 export default function RootLayout() {
   const colorScheme = useColorScheme() || 'light';
-
-  useEffect(() => {
-    if (Platform.OS === 'android') {
-      NavigationBar.setButtonStyleAsync(
-        colorScheme === 'light' ? 'dark' : 'light'
-      );
-    }
-  }, [colorScheme]);
 
   // Keep the root view background color in sync with the current theme
   useEffect(() => {
@@ -54,8 +45,8 @@ export default function RootLayout() {
                 backgroundColor: isLiquidGlassAvailable()
                   ? 'transparent'
                   : colorScheme === 'dark'
-                  ? Colors.dark.card
-                  : Colors.light.card,
+                    ? Colors.dark.card
+                    : Colors.light.card,
               },
               headerTransparent: Platform.OS === 'ios' ? true : false,
               headerLargeTitle: false,
@@ -72,14 +63,14 @@ export default function RootLayout() {
                   Platform.OS === 'ios'
                     ? 'transparent'
                     : colorScheme === 'dark'
-                    ? Colors.dark.card
-                    : Colors.light.card,
+                      ? Colors.dark.card
+                      : Colors.light.card,
               },
               headerBlurEffect: isLiquidGlassAvailable()
                 ? undefined
                 : colorScheme === 'dark'
-                ? 'dark'
-                : 'light',
+                  ? 'dark'
+                  : 'light',
             }}
           />
           <Stack.Screen name='+not-found' />

@@ -15,7 +15,7 @@ import Animated, {
   withTiming,
 } from 'react-native-reanimated';
 
-// Types
+
 type SpinnerSize = 'default' | 'sm' | 'lg' | 'icon';
 export type SpinnerVariant = 'default' | 'circle' | 'dots' | 'pulse' | 'bars';
 
@@ -26,7 +26,7 @@ interface SpinnerProps {
   showLabel?: boolean;
   style?: ViewStyle;
   color?: string;
-  thickness?: number; // Note: thickness is not used in the original component logic
+  thickness?: number;
   speed?: 'slow' | 'normal' | 'fast';
 }
 
@@ -46,7 +46,6 @@ interface SpinnerConfig {
   thickness: number;
 }
 
-// Configuration
 const sizeConfig: Record<SpinnerSize, SpinnerConfig> = {
   sm: { size: 16, iconSize: 16, fontSize: 12, gap: 6, thickness: 2 },
   default: {
@@ -149,7 +148,6 @@ export function Spinner({
     () => [barAnim1, barAnim2, barAnim3, barAnim4],
     [barAnim1, barAnim2, barAnim3, barAnim4]
   );
-  // --- END FIX ---
 
   // Theme colors
   const primaryColor = useColor('text');
@@ -356,10 +354,8 @@ export function LoadingOverlay({
 
   const animatedOverlayStyle = useAnimatedStyle(() => ({
     opacity: opacity.value,
-    // Conditionally render to avoid interaction issues
     display: opacity.value === 0 ? 'none' : 'flex',
   }));
-
   const defaultBackdropColor =
     backdropColor ||
     `${backgroundColor}${Math.round(backdropOpacity * 255)
@@ -371,9 +367,9 @@ export function LoadingOverlay({
       style={[
         styles.overlay,
         { backgroundColor: backdrop ? defaultBackdropColor : 'transparent' },
+        { pointerEvents: visible ? 'auto' : 'none' },
         animatedOverlayStyle,
       ]}
-      pointerEvents={visible ? 'auto' : 'none'}
     >
       <View style={[styles.overlayContent, { backgroundColor: cardColor }]}>
         <Spinner {...spinnerProps} />
@@ -448,7 +444,11 @@ const styles = StyleSheet.create({
     fontWeight: '500',
   },
   overlay: {
-    ...StyleSheet.absoluteFillObject,
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
     alignItems: 'center',
     justifyContent: 'center',
     zIndex: 9999,
